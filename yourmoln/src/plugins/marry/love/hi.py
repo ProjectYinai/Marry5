@@ -7,7 +7,20 @@ greeting_dict = json.loads(json_data)
 rc = random.choice
 
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
-
+import data,api
+def refresh(uid:int,k=0):
+    """刷新问好时间"""
+    if k==0:
+        day = api.stamp_def()[4]
+        query = f"UPDATE G5000 SET b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0, b7 = 0, b8 = 0, b9 = 0, b10 = 0, {data.HILASTTIME} = ?\
+                WHERE user_id = ? AND {data.HILASTTIME} != ?;"
+        args = (day,uid,day)
+    else:#强制刷新
+        day = api.stamp_def()[4]
+        query = f"UPDATE G5000 SET b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0, b7 = 0, b8 = 0, b9 = 0, b10 = 0, {data.HILASTTIME} = 0\
+                WHERE user_id = ?;"
+        args = (uid,)
+    data.sql(query,args)
 def get_current_greeting_types():
     """获取当前时间段可用的问候类型列表"""
     current_hour = datetime.now().hour
@@ -21,11 +34,13 @@ def get_current_greeting_types():
 
 def hi(e:GroupMessageEvent):
     msg=str(e.get_message())
+    uid=int(e.get_user_id())
+    refresh(uid)
     current_hour = datetime.now().hour
     
     # 检查输入的问候类型是否在当前时间范围内
     matched_greeting = None
-
+    t=0
     for greeting in greeting_dict.values():
         if greeting['type'] == msg:
             if current_hour in greeting['range']:
@@ -37,6 +52,7 @@ def hi(e:GroupMessageEvent):
                 name = '店长'
                 res = res.replace('_n_','\n').replace('【店长】',name)
                 return res
+        t+=1
 
     
     # 从normalN消息组中随机选择一条消息
@@ -48,12 +64,25 @@ def hi(e:GroupMessageEvent):
                 break
     
     res = rc(messages)[0]  # 获取消息内容
-    ###########凌晨3点半了，燃尽了还没改##################
-    name = '店长'
-    res = res.replace('_n_','\n').replace('【店长】',name)
-    num = 35
-    lv = 100
-    nick = "值得信赖的伙伴"
-    res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}\n[好感度+{num}]"
+    
+    query=f"SELECT {data.LOVE}, {data.NAME}, b2, b3, b4, b5, b6, b7, b8, b9, b10 FROM G5000 where user_id== ?"
+    args=(uid,)
+    rows = data.sql(query,args)
+    love = rows[0][0]
+    b=[0,0,0,0,0,0,0,0,0,0,0,0]
+    for i in range(9):
+        b[i] = rows[0][i+2]
+    name = '店长' if rows[0][1] in [0,'0',None] else rows[0][1]
+    res=res.replace('_n_','\n').replace('【店长】',name)
+    if b[t] == 0 and sum(b) <= 2:
+        num=random.randint(24,40)
+        query=f"update G5000 set {data.LOVE}=?, b{t+2}=1 where user_id== ?"
+        args=(love+num,uid,)
+        data.sql(query,args)
+        lv,nick = api.lv(love+num)
+        res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}\n[好感度+{num}]"
+    else:
+        lv,nick = api.lv(love)
+        res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}"
     ########################################
     return res
