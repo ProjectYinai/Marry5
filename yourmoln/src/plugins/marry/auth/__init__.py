@@ -56,7 +56,7 @@ async def getauthFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     if lv<0x100:
         msg="( 〞 0 ˄ 0 )错误代码：D-1-5。\n领养人好感度等级未到100级！"
     elif who:
-        msg="( 〞 0 ˄ 0 )错误代码：D-1-3。\n本群已授权且已存在领养人。若想更改领养人，请联系茉莉的主人音奈更改。_n_不过更新了一下pjsk的授权~"
+        msg="( 〞 0 ˄ 0 )错误代码：D-1-3。\n本群已授权且已存在领养人。若想更改领养人，请联系茉莉的主人音奈更改。\n不过更新了一下pjsk的授权~"
     else:
         time = stamp_def()[0]
         data.sql("INSERT INTO auth (uid, gid, time) VALUES (?, ?, ?)",(uid,msg_i,time))

@@ -1,8 +1,9 @@
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
+from nonebot.adapters import Bot
 import re
 import data
 call_start={"茉莉以后叫我","茉莉请叫我","茉莉叫我"}
-def callme(e:GroupMessageEvent):
+async def callme(bot:Bot, e:GroupMessageEvent):
     msg = str(e.get_message())
     uid = int(e.get_user_id())
     for i in call_start:

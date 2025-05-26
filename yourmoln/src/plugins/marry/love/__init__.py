@@ -19,24 +19,24 @@ callTime=on_startswith(call_start,is_type(GroupMessageEvent),priority=10,block=T
 
 @teaTime.handle()
 async def teaFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
-    msg=tea(e)
+    msg=await tea(bot,e)
     msg_o=reply(e,msg)
     await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
 
 @hiTime.handle()
 async def hiFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
-    msg=hi(e)
+    msg=await hi(bot,e)
     msg_o=reply(e,msg)
     await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
 
 @loveTime.handle()
 async def loveFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
-    msg=getLove(e)
+    msg=await getLove(bot,e)
     msg_o=reply(e,msg)
     await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
 
 @callTime.handle()
 async def callFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
-    msg=callme(e)
+    msg=await callme(bot,e)
     msg_o=reply(e,msg)
     await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)

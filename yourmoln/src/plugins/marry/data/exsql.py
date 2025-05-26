@@ -20,7 +20,7 @@ def getLove(uid:int) -> tuple:
     rows = cursor.fetchall()
     for row in rows:
         name = '店长' if row[1] in [0,'0',None] else row[1]
-        lv,nick = api.lv(row[0])
+        lv,nick = api.lv(row[0],name)
         return lv,nick,row[0],name
 def addTeaTimes():
     day = api.stamp_def()[4]

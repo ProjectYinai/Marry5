@@ -1,22 +1,31 @@
+from nonebot import get_bot
 from nonebot.adapters import Bot, Event, Message # type: ignore
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent, MessageEvent
 import time,datetime
 import json,os,random
+import data
 script_path = os.path.split(os.path.realpath(__file__))[0]
 json_data = open(f"{script_path}/lv.json",encoding="UTF-8").read()
 lv_list = json.loads(json_data)
 def reply(e:MessageEvent,msg:str):
     #生成回复消息
-    data=[{"type":"reply","data":{"id":str(e.message_id)}},{"type":"text","data":{"text":msg}}]
-    return data
-def lv(love:int):
+    res=[{"type":"reply","data":{"id":str(e.message_id)}},{"type":"text","data":{"text":msg}}]
+    return res
+def lv(love:int,name='0'):
     love = int(love)
     lv = int((love*6)**0.5)
     for i in lv_list[::-1]:
         if lv >= i['lv']:
             nick = i['nick']
             break
+    nick = nick.replace('【店长】',name)
     return lv,nick
+
+async def myfriends():
+    bot=get_bot()
+    fl = await bot.get_friend_list(no_cache=False)
+    friends=[i["user_id"] for i in fl]
+    return friends
 
 def stamp_def():
     birthday=1513972500

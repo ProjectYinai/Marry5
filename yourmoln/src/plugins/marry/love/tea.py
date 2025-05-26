@@ -4,10 +4,11 @@ json_data = open(f"{script_path}/tea.json",encoding="UTF-8").read()
 # 解析JSON为字典
 tea_dict = json.loads(json_data)
 rc = random.choice
+from nonebot.adapters import Bot
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
 import data,api
 
-def tea(e:GroupMessageEvent):
+async def tea(bot:Bot, e:GroupMessageEvent):
     msg=str(e.get_message())
     uid=int(e.get_user_id())
     if msg == "泡茉莉":
@@ -36,10 +37,15 @@ def tea(e:GroupMessageEvent):
         query=f"update G5000 set {data.LOVE}=?, {data.LASTTIME}=? where user_id== ?"
         args=(love+num,stamp[4],uid,)
         data.sql(query,args)
-        lv,nick = api.lv(love+num)
+        lv,nick = api.lv(love+num,name)
         res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}\n[好感度+{num}|今天的第{order}杯茉莉~]"
     else:
-        lv,nick = api.lv(love)
+        lv,nick = api.lv(love,name)
         res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}\n[今天的第{order}杯茉莉~]"
-    
+    fs = await api.myfriends()
+    if uid in fs:
+        pmsg=rc(tea_dict[kind[1]]['message']["normalN"])[0]
+        pmsg=pmsg.replace('_n_','\n').replace('【店长】',name)
+        m=[{"type":"text","data":{"text":pmsg}}]
+        await bot.send_private_msg(user_id=uid,message=m)
     return res

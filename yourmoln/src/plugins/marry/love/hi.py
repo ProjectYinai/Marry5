@@ -7,6 +7,7 @@ greeting_dict = json.loads(json_data)
 rc = random.choice
 
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
+from nonebot.adapters import Bot
 import data,api
 def refresh(uid:int,k=0):
     """刷新问好时间"""
@@ -32,7 +33,7 @@ def get_current_greeting_types():
             available_types.append("和")
     return available_types[:-1]
 
-def hi(e:GroupMessageEvent):
+async def hi(bot:Bot, e:GroupMessageEvent):
     msg=str(e.get_message())
     uid=int(e.get_user_id())
     refresh(uid)
@@ -71,15 +72,28 @@ def hi(e:GroupMessageEvent):
     love = rows[0][0]
     b=rows[0][2:]
     name = '店长' if rows[0][1] in [0,'0',None] else rows[0][1]
+    res = res.split('_n_')[0]
     res=res.replace('_n_','\n').replace('【店长】',name)
     if b[t] == 0 and sum(b) <= 2:
         num=random.randint(12,20)
         query=f"update G5000 set {data.LOVE}=?, b{t+2}=1 where user_id== ?"
         args=(love+num,uid,)
         data.sql(query,args)
-        lv,nick = api.lv(love+num)
+        lv,nick = api.lv(love+num,name)
         res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}\n[好感度+{num}]"
-    else:
-        lv,nick = api.lv(love)
+    elif b[t] == 0:
+        query=f"update G5000 set b{t+2}=1 where user_id== ?"
+        args=(uid,)
+        data.sql(query,args)
+        lv,nick = api.lv(love,name)
         res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}\n今天聊得真开心呢ww~"
+    else:
+        res = f"(*ﾟーﾟ)【店长】今天已经说过[{msg}]啦~"
+        return res
+    fs = await api.myfriends()
+    if uid in fs:
+        pmsg=rc(messages)[0]
+        pmsg=pmsg.replace('_n_','\n').replace('【店长】',name)
+        m=[{"type":"text","data":{"text":pmsg}}]
+        await bot.send_private_msg(user_id=uid,message=m)
     return res
