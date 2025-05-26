@@ -69,13 +69,11 @@ def hi(e:GroupMessageEvent):
     args=(uid,)
     rows = data.sql(query,args)
     love = rows[0][0]
-    b=[0,0,0,0,0,0,0,0,0,0,0,0]
-    for i in range(9):
-        b[i] = rows[0][i+2]
+    b=rows[0][2:]
     name = '店长' if rows[0][1] in [0,'0',None] else rows[0][1]
     res=res.replace('_n_','\n').replace('【店长】',name)
     if b[t] == 0 and sum(b) <= 2:
-        num=random.randint(24,40)
+        num=random.randint(12,20)
         query=f"update G5000 set {data.LOVE}=?, b{t+2}=1 where user_id== ?"
         args=(love+num,uid,)
         data.sql(query,args)
@@ -83,6 +81,5 @@ def hi(e:GroupMessageEvent):
         res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}\n[好感度+{num}]"
     else:
         lv,nick = api.lv(love)
-        res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}"
-    ########################################
+        res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}\n今天聊得真开心呢ww~"
     return res
