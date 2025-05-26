@@ -21,13 +21,9 @@ def tea(e:GroupMessageEvent):
             kind = rc(list(tea_dict['kinds_of_tea'].items()))
             res:str = rc(tea_dict[kind[1]]['group'])
     data.addTeaTimes()
-    LOVE = 'A2'
-    TIMES = 'p1'
-    LASTTIME = 'b1'
-    NAME = 'a4'
     stamp=api.stamp_def()
     
-    query=f"SELECT {LOVE},{TIMES},{LASTTIME},{NAME} FROM G5000 where user_id== ? or user_id== 1000"
+    query=f"SELECT {data.LOVE},{data.TIMES},{data.LASTTIME},{data.NAME} FROM G5000 where user_id== ? or user_id== 1000"
     args=(uid,)
     rows = data.sql(query,args)
     order = rows[0][1]
@@ -38,7 +34,7 @@ def tea(e:GroupMessageEvent):
     res=res.replace('_n_','\n').replace('【店长】',name)
     if lasttime != stamp[4]:
         num=random.randint(24,40)
-        query=f"update G5000 set {LOVE}=?, {LASTTIME}=? where user_id== ?"
+        query=f"update G5000 set {data.LOVE}=?, {data.LASTTIME}=? where user_id== ?"
         args=(love+num,stamp[4],uid,)
         data.sql(query,args)
         res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}\n[好感度+{num}|今天的第{order}杯茉莉~]"

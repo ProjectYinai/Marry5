@@ -1,7 +1,7 @@
 import sqlite3
 import os
 script_path = os.path.split(os.path.realpath(__file__))[0]
-
+from .const import *
 import api
 connection = sqlite3.connect(f'{script_path}/tea_data.db')
 cursor = connection.cursor()
@@ -13,7 +13,7 @@ def sql(query,args=()) -> list:
 def getLove(uid:int) -> tuple:
     uid=int(uid)
     """lv,nick,love,name"""
-    query = 'SELECT A2, a4 FROM G5000 where user_id== ?'
+    query = f'SELECT {LOVE}, {NAME} FROM G5000 where user_id== ?'
     args=(uid,)
     cursor.execute(query, args)
     connection.commit()
@@ -24,11 +24,11 @@ def getLove(uid:int) -> tuple:
         return lv,nick,row[0],name
 def addTeaTimes():
     day = api.stamp_def()[4]
-    query = "UPDATE G5000 SET b1 = ?, p1 = CASE WHEN b1 = ? THEN p1 + 1 ELSE 1 END WHERE user_id = 1000;"
+    query = f"UPDATE G5000 SET {LASTTIME} = ?, {TIMES} = CASE WHEN {LASTTIME} = ? THEN {TIMES} + 1 ELSE 1 END WHERE user_id = 1000;"
     cursor.execute(query,(day,day))
     connection.commit()
 def getTeaTimes() -> int:
-    query = 'SELECT p1 FROM G5000 where user_id== 1000'
+    query = f'SELECT {TIMES} FROM G5000 where user_id== 1000'
     cursor.execute(query)
     rows = cursor.fetchall()
     connection.commit()
