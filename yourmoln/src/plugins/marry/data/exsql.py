@@ -11,8 +11,8 @@ def sql(query,args=()) -> list:
     connection.commit()
     return rows
 def getLove(uid:int) -> tuple:
-    uid=int(uid)
     """lv,nick,love,name"""
+    uid=int(uid)
     query = f'SELECT {LOVE}, {NAME} FROM G5000 where user_id== ?'
     args=(uid,)
     cursor.execute(query, args)
