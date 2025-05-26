@@ -29,7 +29,6 @@ def tea(e:GroupMessageEvent):
     order = rows[0][1]
     love = rows[1][0]
     lasttime = rows[1][2]
-    lv,nick = api.lv(love)
     name = '店长' if rows[1][3] in [0,'0',None] else rows[1][3]
     res=res.replace('_n_','\n').replace('【店长】',name)
     if lasttime != stamp[4]:
@@ -37,8 +36,10 @@ def tea(e:GroupMessageEvent):
         query=f"update G5000 set {data.LOVE}=?, {data.LASTTIME}=? where user_id== ?"
         args=(love+num,stamp[4],uid,)
         data.sql(query,args)
+        lv,nick = api.lv(love+num)
         res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}\n[好感度+{num}|今天的第{order}杯茉莉~]"
     else:
+        lv,nick = api.lv(love)
         res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}\n[今天的第{order}杯茉莉~]"
     
     return res
