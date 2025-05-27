@@ -76,13 +76,13 @@ async def hi(bot:Bot, e:GroupMessageEvent):
     res=res.replace('_n_','\n').replace('【店长】',name)
     if b[t] == 0 and sum(b) <= 2:
         num=random.randint(12,20)
-        query=f"update G5000 set {data.LOVE}=?, b{t+2}=1 where user_id== ?"
+        query=f"update G5000 set {data.LOVE}=?, b{t+2}=1, {data.GREETTIMES}={data.GREETTIMES}+1 where user_id== ?"
         args=(love+num,uid,)
         data.sql(query,args)
         lv,nick = api.lv(love+num,name)
         res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}\n[好感度+{num}]"
     elif b[t] == 0:
-        query=f"update G5000 set b{t+2}=1 where user_id== ?"
+        query=f"update G5000 set b{t+2}=1, {data.GREETTIMES}={data.GREETTIMES}+1 where user_id== ?"
         args=(uid,)
         data.sql(query,args)
         lv,nick = api.lv(love,name)

@@ -11,9 +11,9 @@ def sql(query,args=()) -> list:
     connection.commit()
     return rows
 def getLove(uid:int) -> tuple:
-    """lv,nick,love,name"""
+    """lv,nick,love,name,teatimes,greettimes,meettime"""
     uid=int(uid)
-    query = f'SELECT {LOVE}, {NAME} FROM G5000 where user_id== ?'
+    query = f'SELECT {LOVE}, {NAME}, {TEATIMES}, {GREETTIMES}, {MEETTIME} FROM G5000 where user_id== ?'
     args=(uid,)
     cursor.execute(query, args)
     connection.commit()
@@ -21,7 +21,7 @@ def getLove(uid:int) -> tuple:
     for row in rows:
         name = '店长' if row[1] in [0,'0',None] else row[1]
         lv,nick = api.lv(row[0],name)
-        return lv,nick,row[0],name
+        return lv,nick,row[0],name,row[2],row[3],row[4]
 def addTeaTimes():
     day = api.stamp_def()[4]
     query = f"UPDATE G5000 SET {LASTTIME} = ?, {TIMES} = CASE WHEN {LASTTIME} = ? THEN {TIMES} + 1 ELSE 1 END WHERE user_id = 1000;"

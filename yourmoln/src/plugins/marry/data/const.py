@@ -3,7 +3,9 @@ TIMES = 'p1'
 LASTTIME = 'b1'
 NAME = 'a4'
 HILASTTIME="b11"
-
+TEATIMES = 'A7'
+MEETTIME = 'A6'
+GREETTIMES = 'A8'
 #个人临时数据
 # B1：个人泡茉莉时间戳/时间戳天
 # B2：清晨好好时间戳/时间戳天
