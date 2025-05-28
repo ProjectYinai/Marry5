@@ -14,7 +14,7 @@ def refresh(uid:int,k=0):
     if k==0:
         day = api.stamp_def()[4]
         query = f"UPDATE G5000 SET b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0, b7 = 0, b8 = 0, b9 = 0, b10 = 0, {data.HILASTTIME} = ?\
-                WHERE user_id = ? AND {data.HILASTTIME} != ?;"
+                WHERE user_id = ? AND {data.HILASTTIME} != ? OR {data.HILASTTIME} IS NULL;"
         args = (day,uid,day)
     else:#强制刷新
         day = api.stamp_def()[4]
