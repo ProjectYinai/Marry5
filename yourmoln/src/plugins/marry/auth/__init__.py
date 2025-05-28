@@ -31,6 +31,7 @@ def getauth(gid):
 @authTime.handle()
 async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     gid=e.group_id
+    uid=e.user_id
     flag = 1
     at = data.sql("select uid from auth WHERE gid == ?",(gid,))
     for i in at:
@@ -44,6 +45,11 @@ async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     #await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
     if flag: #没有授权
         matcher.stop_propagation()
+    else:
+        data.sql(f"INSERT OR IGNORE INTO G5000 \
+                 (user_id,group_id,{data.MEETTIME},WHITELIST = 'a1') values \
+                 (?,5000,?,1)",
+                 (uid,stamp_def()[4]))#如果是新店长则添加数据
 
 @getauthTime.handle()
 async def getauthFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
