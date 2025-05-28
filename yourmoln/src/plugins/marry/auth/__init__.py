@@ -47,7 +47,7 @@ async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
         matcher.stop_propagation()
     else:
         data.sql(f"INSERT OR IGNORE INTO G5000 \
-                 (user_id,group_id,{data.MEETTIME},WHITELIST = 'a1') values \
+                 (user_id,group_id,{data.MEETTIME},{data.WHITELIST}) values \
                  (?,5000,?,1)",
                  (uid,stamp_def()[4]))#如果是新店长则添加数据
 

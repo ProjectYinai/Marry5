@@ -11,6 +11,10 @@ def reply(e:MessageEvent,msg:str):
     #生成回复消息
     res=[{"type":"reply","data":{"id":str(e.message_id)}},{"type":"text","data":{"text":msg}}]
     return res
+def replyImg(e:MessageEvent,img:str):
+    #生成回复消息
+    res=[{"type":"reply","data":{"id":str(e.message_id)}},{"type":"image","data":{"file":img}}]
+    return res
 def lv(love:int,name='0'):
     love = int(love)
     lv = int((love*6)**0.5)
