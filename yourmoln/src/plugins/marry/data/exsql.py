@@ -41,23 +41,23 @@ def getTeaTimes() -> int:
 #用户数据表不存在则创建
 sql("""CREATE TABLE IF NOT EXISTS user (
         uid      INTEGER PRIMARY KEY,
-        white    INTEGER DEFAULT (1),
-        love     INTEGER DEFAULT (0),
+        white    INTEGER DEFAULT (1) NOT NULL,
+        love     INTEGER DEFAULT (0) NOT NULL,
         name     TEXT,
         prename  TEXT,
-        nametime INTEGER DEFAULT (0),
-        meet     INTEGER DEFAULT (0),
-        etea     INTEGER DEFAULT (0),
-        egreet   INTEGER DEFAULT (0),
-        teatime  INTEGER DEFAULT (0),
-        greetime INTEGER DEFAULT (0),
-        ifgreet  INTEGER DEFAULT (0)
+        nametime INTEGER DEFAULT (0) NOT NULL,
+        meet     INTEGER DEFAULT (0) NOT NULL,
+        etea     INTEGER DEFAULT (0) NOT NULL,
+        egreet   INTEGER DEFAULT (0) NOT NULL,
+        teatime  INTEGER DEFAULT (0) NOT NULL,
+        greetime INTEGER DEFAULT (0) NOT NULL,
+        ifgreet  INTEGER DEFAULT (0) NOT NULL
     )""")
 sql("""CREATE TABLE IF NOT EXISTS auth (
         id   INTEGER PRIMARY KEY AUTOINCREMENT,
-        uid  INTEGER,
-        gid  INTEGER,
-        time INTEGER
+        uid  INTEGER NOT NULL,
+        gid  INTEGER NOT NULL,
+        time INTEGER NOT NULL
     );""")
 #茉莉的初始化数据行
 sql(f"""INSERT OR IGNORE INTO user (
