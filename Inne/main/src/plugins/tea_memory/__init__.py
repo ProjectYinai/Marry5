@@ -40,7 +40,7 @@ code_listg=["g1","g2","g3","g4","g5",
             "s1","s2","s3",
             "t1","t2","t3","t4"]
 #========
-from . import globe
+from . import globe,initial
 global overall
 overall=globe.overall()
 script_path = os.path.split(os.path.realpath(__file__))[0]

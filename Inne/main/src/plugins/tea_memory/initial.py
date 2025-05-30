@@ -26,4 +26,5 @@ if version[0]!=VER:
                 cursor.execute(f"ALTER TABLE {table_name} ADD COLUMN {column_name[0]} {column_name[1]} NOT NULL")
             else:
                 pass
-    conn.commit()            
+    conn.commit()    
+conn.close()        
