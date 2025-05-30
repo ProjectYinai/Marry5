@@ -1,5 +1,5 @@
-[["uid", "INTEGER"], 
-           ["gid", "INTEGER"], 
+[["user_id", "INTEGER"], 
+           ["group_id", "INTEGER"], 
            ["A1", "INTEGER"], 
            ["A2", "INTEGER"],
            ["A3", "INTEGER"],
