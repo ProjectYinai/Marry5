@@ -5,7 +5,7 @@ from nonebot.rule import is_type
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
 from api import reply, stamp_def, mygroups
 import data
-
+import requests
 get_auth_start={"授权申请","申请授权"}
 search_auth_start={"查授权"}
 getauthTime=on_startswith(get_auth_start,is_type(GroupMessageEvent),priority=10,block=True)
@@ -39,6 +39,9 @@ async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     if flag: #没有授权
         #删除群授权
         data.sql("DELETE FROM auth WHERE gid=?;",(gid,))
+        haruki_url="http://127.0.0.1:2525/haruki_client/controller/remove_whitelist"
+        payload = {"module":"pjsk","group_ids":[int(gid)]}
+        requests.post(haruki_url, json=payload)
         #退群
         lastsent = await bot.get_group_member_info(group_id=gid,user_id=bot.self_id,no_cache=False)
         lastsent = int(lastsent["last_sent_time"])
@@ -70,9 +73,17 @@ async def getauthFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     elif who:
         msg="( 〞 0 ˄ 0 )错误代码：D-1-3。\n本群已授权且已存在领养人。若想更改领养人，请联系茉莉的主人音奈更改。\n不过更新了一下pjsk的授权~"
     else:
-        time = stamp_def()[0]
-        data.sql("INSERT INTO auth (uid, gid, time) VALUES (?, ?, ?)",(uid,msg_i,time))
-        msg = f"｡:.ﾟヽ(*´∀`)ﾉﾟ.:｡领养成功~\n领养群：{msg_i}\n领养有效期：-1天，大概。\n请领养人不要删除茉莉好友！不要退出主群！可永久屏蔽主群！\n(PS: 领养人需要保持群主或者管理员身份授权才不会掉哦)"
+        role = await bot.get_group_member_info(group_id=msg_i,user_id=uid,no_cache=False)
+        role = role['role']
+        if role not in ['admin','owner']:
+            msg=f"( 〞 0 ˄ 0 )错误代码：D-2-1。\n店长不是群聊({msg_i})的管理员或群主呢。"
+        else:
+            time = stamp_def()[0]
+            data.sql("INSERT INTO auth (uid, gid, time) VALUES (?, ?, ?)",(uid,msg_i,time))
+            msg = f"｡:.ﾟヽ(*´∀`)ﾉﾟ.:｡领养成功~\n领养群：{msg_i}\n领养有效期：-1天，大概。\n请领养人不要删除茉莉好友！不要退出主群！可永久屏蔽主群！\n(PS: 领养人需要保持群主或者管理员身份才不会掉授权哦)"
+            haruki_url="http://127.0.0.1:2525/haruki_client/controller/add_whitelist"
+            payload = {"module":"pjsk","group_ids":[int(msg_i)]}
+            requests.post(haruki_url, json=payload)
     msg_o=reply(e,msg)
     await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
 
