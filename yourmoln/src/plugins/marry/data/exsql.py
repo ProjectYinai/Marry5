@@ -13,7 +13,8 @@ def sql(query,args=()) -> list:
 def getLove(uid:int) -> tuple:
     """lv,nick,love,name,teatimes,greettimes,meettime"""
     uid=int(uid)
-    query = f'SELECT {LOVE}, {NAME}, {TEATIMES}, {GREETTIMES}, {MEETTIME} FROM G5000 where user_id== ?'
+    #query = f'SELECT {LOVE}, {NAME}, {TEATIMES}, {GREETTIMES}, {MEETTIME} FROM G5000 where user_id== ?'
+    query = f'SELECT love, name, etea, egreet, meet FROM user where uid== ?'
     args=(uid,)
     cursor.execute(query, args)
     connection.commit()
@@ -24,16 +25,47 @@ def getLove(uid:int) -> tuple:
         return lv,nick,row[0],name,row[2],row[3],row[4]
 def addTeaTimes():
     day = api.stamp_def()[4]
-    query = f"UPDATE G5000 SET {LASTTIME} = ?, {TIMES} = CASE WHEN {LASTTIME} = ? THEN {TIMES} + 1 ELSE 1 END WHERE user_id = 1000;"
+    #query = f"UPDATE G5000 SET {LASTTIME} = ?, {TIMES} = CASE WHEN {LASTTIME} = ? THEN {TIMES} + 1 ELSE 1 END WHERE user_id = 1000;"
+    query = f"UPDATE user SET teatime = ?, etea = CASE WHEN teatime = ? THEN etea + 1 ELSE 1 END WHERE uid = 1;"
     cursor.execute(query,(day,day))
     connection.commit()
 def getTeaTimes() -> int:
-    query = f'SELECT {TIMES} FROM G5000 where user_id== 1000'
+    #query = f'SELECT {TIMES} FROM G5000 where user_id== 1000'
+    query = f'SELECT etea FROM user where uid== 1'
     cursor.execute(query)
     rows = cursor.fetchall()
     connection.commit()
     for row in rows:
         return row[0]
+    
+#用户数据表不存在则创建
+sql("""CREATE TABLE IF NOT EXISTS user (
+        uid      INTEGER PRIMARY KEY,
+        white    INTEGER DEFAULT (1),
+        love     INTEGER DEFAULT (0),
+        name     TEXT,
+        prename  TEXT,
+        nametime INTEGER DEFAULT (0),
+        meet     INTEGER DEFAULT (0),
+        etea     INTEGER DEFAULT (0),
+        egreet   INTEGER DEFAULT (0),
+        teatime  INTEGER DEFAULT (0),
+        greetime INTEGER DEFAULT (0),
+        ifgreet  INTEGER DEFAULT (0)
+    )""")
+sql("""CREATE TABLE IF NOT EXISTS auth (
+        id   INTEGER PRIMARY KEY AUTOINCREMENT,
+        uid  INTEGER,
+        gid  INTEGER,
+        time INTEGER
+    );""")
+#茉莉的初始化数据行
+sql(f"""INSERT OR IGNORE INTO user (
+        uid
+    ) values (
+        1
+    )""")
+
 #数据库操作示例
 """
 # 连接到SQLite数据库
