@@ -31,6 +31,12 @@ async def myfriends():
     friends=[i["user_id"] for i in fl]
     return friends
 
+async def mygroups():
+    bot=get_bot()
+    gl = await bot.get_group_list()
+    groups=[i["group_id"] for i in gl]
+    return groups
+
 def stamp_def():
     birthday=1513972500
     time_stamp=int(time.time())
