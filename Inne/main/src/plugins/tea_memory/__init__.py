@@ -40,10 +40,11 @@ code_listg=["g1","g2","g3","g4","g5",
             "s1","s2","s3",
             "t1","t2","t3","t4"]
 #========
-import api,globe
-global stamp,cfg
-stamp=globe.stamp()
-cfg=globe.cfg()
+from . import globe
+global overall
+overall=globe.overall()
+script_path = os.path.split(os.path.realpath(__file__))[0]
+data_path = f'{script_path}\\tea_data.db'
 #========
 
 #================

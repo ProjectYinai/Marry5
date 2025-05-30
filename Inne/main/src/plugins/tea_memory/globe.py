@@ -1,13 +1,11 @@
 from nonebot import get_driver
 import time
 
-def overall():
-    stamp=stamp_def()
-    cfg=cfg_def()
-    return(stamp,cfg)
+
     
-def cfg_def():
+class cfg():
     env=get_driver().config
+    VER=env.VERSION#当前版本
     MG=env.MAINGROUP#main group 主群
     BG=env.BACKGROUP#background group 后台群
     AG=env.ADMINGROUP#admin group 管理权限群
@@ -20,9 +18,9 @@ def cfg_def():
     #=======
     #简易汇总
     cfg={"MG":MG,"BG":BG,"AG":AG,"SU":SU,"MB":MB,"SB":SB,"SP":SP}
-    return(cfg)
 
-def stamp_def():
+
+class stamp():
     birthday=1513972500
     time_stamp=int(time.time())
     time_interval=time_stamp-birthday
@@ -60,5 +58,3 @@ def stamp_def():
     time_local_mday,
     time_local_mon,
     time_local_year]
-
-    return(stamp)

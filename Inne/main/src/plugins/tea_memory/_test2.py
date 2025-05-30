@@ -75,6 +75,7 @@ def create_database_and_table(db_path_new, table_name, columns):
     p1=get_column_data(db_path, 'g5000', "p1")
 
     # 执行CREATE TABLE语句
+    
     cursor.execute(create_table_query)
     print(f"Table '{table_name}' created successfully.")
     for i in range(len(uid)):
@@ -95,46 +96,42 @@ def create_database_and_table(db_path_new, table_name, columns):
         else:
             a2n=a2[i]
         if a3[i]==None:
+            b1n=0
+        else:
+            b1n=a3[i]
+        if a4[i]==None:
+            b2n=0
+        else:
+            b2n=a4[i]
+        if a5[i]==None:
+            b3n=0
+        else:
+            b3n=a5[i]
+        if a6[i]==None:
             a3n=0
         else:
-            a3n=a3[i]
-        if a4[i]==None:
+            a3n=a6[i]
+        if a7[i]==None:
             a4n=0
         else:
-            a4n=a4[i]
-        if a5[i]==None:
+            a4n=a7[i]
+        if a8[i]==None:
             a5n=0
         else:
-            a5n=a5[i]
-        if a6[i]==None:
+            a5n=a8[i]
+        if a9[i]==None:
             a6n=0
         else:
-            a6n=a6[i]
-        if a7[i]==None:
+            a6n=a9[i]
+        if a10[i]==None:
             a7n=0
         else:
-            a7n=a7[i]
-        if a8[i]==None:
-            a8n=0
-        else:
-            a8n=a8[i]
-        if a9[i]==None:
-            a9n=0
-        else:
-            a9n=a9[i]
-        if a10[i]==None:
-            a10n=0
-        else:
-            a10n=a10[i]
-        if p1[i]==None:
-            p1n=0
-        else:
-            p1n=p1[i]
+            a7n=a10[i]
         
-        cursor.execute(f"""insert into G1000(uid,gid,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,B1,B2,B3,B4,B5,B6,B7,B8,B9,B10,B11,B12,P1,Q1,Q2,G1,G2,G3,G4,G5,H1,H2,S1,S2,T1,T2,T3,T4) 
-                    values({uidn},{1000},'{a1n}','{a2n}','{a3n}','{a4n}','{a5n}','{a6n}','{a7n}','{a8n}','{a9n}','{a10n}',0,0,0,0,0,0,0,0,0,0,0,0,'{p1n}',0,0,'0','0','0','0','0',0,0,'0','0',0,0,0,0)""")
+        cursor.execute(f"""insert into G1000(uid,gid,A1,A2,A3,A4,A5,A6,A7,B1,B2,B3,C1,C2,C3,C4,C5,C6,C7,C8,C9,C10,C11,C12,G1,G2,G3,G4,G5,H1,I1,I2,R1,S1,T1,T2,T3,T4) 
+                    values({uidn},{1000},{a1n},{a2n},{a3n},{a4n},{a5n},{a6n},{a7n},'{b1n}','{b2n}','{b3n}',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'0',0,0,0,'0',0,0,0,0)""")
     # 提交更改并关闭连接
-        conn.commit()
+    conn.commit()
     conn.close()
 
 # 示例用法
@@ -142,40 +139,38 @@ def create_database_and_table(db_path_new, table_name, columns):
 table_name = 'G1000'
 columns = [("uid", "INTEGER"), 
            ("gid", "INTEGER"), 
-           ("A1", "TEXT"), 
-           ("A2", "TEXT"),
-           ("A3", "TEXT"),
-           ("A4", "TEXT"),
-           ("A5", "TEXT"),
-           ("A6", "TEXT"),
-           ("A7", "TEXT"), 
-           ("A8", "TEXT"),
-           ("A9", "TEXT"),
-           ("A10", "TEXT"),
-           ("B1", "INTEGER"),
-           ("B2", "INTEGER"),
-           ("B3", "INTEGER"),
-           ("B4", "INTEGER"),
-           ("B5", "INTEGER"),
-           ("B6", "INTEGER"),
-           ("B7", "INTEGER"),
-           ("B8", "INTEGER"),
-           ("B9", "INTEGER"),
-           ("B10", "INTEGER"),
-           ("B11", "INTEGER"),
-           ("B12", "INTEGER"),
-           ("P1", "TEXT"),
-           ("Q1", "INTEGER"),
-           ("Q2", "INTEGER"),
-           ("G1", "TEXT"),
-           ("G2", "TEXT"),
-           ("G3", "TEXT"),
-           ("G4", "TEXT"),
-           ("G5", "TEXT"),
-           ("H1", "INTEGER"),
-           ("H2", "INTEGER"),
+           ("A1", "INTEGER"), 
+           ("A2", "INTEGER"),
+           ("A3", "INTEGER"),
+           ("A4", "INTEGER"),
+           ("A5", "INTEGER"),
+           ("A6", "INTEGER"),
+           ("A7", "INTEGER"), 
+           ("B1", "TEXT"),
+           ("B2", "TEXT"),
+           ("B3", "TEXT"), 
+           ("C1", "INTEGER"),
+           ("C2", "INTEGER"),
+           ("C3", "INTEGER"),
+           ("C4", "INTEGER"),
+           ("C5", "INTEGER"),
+           ("C6", "INTEGER"),
+           ("C7", "INTEGER"),
+           ("C8", "INTEGER"),
+           ("C9", "INTEGER"),
+           ("C10", "INTEGER"),
+           ("C11", "INTEGER"),
+           ("C12", "INTEGER"),
+           ("G1", "INTEGER"),
+           ("G2", "INTEGER"),
+           ("G3", "INTEGER"),
+           ("G4", "INTEGER"),
+           ("G5", "INTEGER"),
+           ("H1", "TEXT"),
+           ("I1", "INTEGER"),
+           ("I2", "INTEGER"),
+           ("R1", "INTEGER"),
            ("S1", "TEXT"),
-           ("S2", "TEXT"),
            ("T1", "INTEGER"),
            ("T2", "INTEGER"),
            ("T3", "INTEGER"),

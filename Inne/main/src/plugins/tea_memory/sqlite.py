@@ -1,12 +1,13 @@
 import sqlite3 as sql
 import globe
 
-from . import api
+from . import api,globe
 #========
 global stamp,cfg
-stamp=api.stamp()
-cfg=api.cfg()
-tea_db=sql.connect(FP+"/tea/tea_data.db")
+stamp=globe.stamp.stamp()
+cfg=globe.cfg.cfg()
+
+tea_db=sql.connect(cfg["SP"]+"/tea/tea_data.db")
 tea_cur=tea_db.cursor()
 
 async def sql_select(uid,table,column):
@@ -30,7 +31,7 @@ async def sql_update_text(uid,ggid,code,value):
     tea_cur.execute(f"update {ggid} set {code}='{value}' where user_id=={uid}")
     tea_db.commit() 
     
-async def execute(code):
+async def sql_execute(code):
     feedback=tea_cur.execute(code)
     tea_db.commit()
     return(feedback)
