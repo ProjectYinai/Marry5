@@ -3,9 +3,9 @@ class USER:
     uid:int = 'uid'#qq号
     white:int = 'white'#白名单，1是好人
     love:int = 'love'#好感度
-    nick:str = 'nick'#自定义昵称
-    prenick:str = 'prenick'#未审核的昵称
-    nicktime:int = 'nicktime'#改名cd
+    name:str = 'name'#自定义昵称
+    prename:str = 'prename'#未审核的昵称
+    nametime:int = 'nametime'#改名cd
     meet:int = 'meet'#相遇的日子
     everytea:int = 'etea'#所有喝茶的日子(为什么不叫alltea呢，因为我觉得每个tea的瞬间更浪漫)
     everygreet:int = 'egreet'#所有问好的日子(同上)
@@ -16,7 +16,9 @@ class USER:
     #对于uid为1的数据来说
     #everytea是所有人当天的喝茶次数
     #其它的也可以类推哦，uid1可以记录下茉莉自己的数据
-
+class admin:
+    group:list = ['947421516']#用于接收名字审核等通知
+    id:list = ['3402824831','2373725901']#同意名字审核等权限
 LOVE = 'A2'
 TIMES = 'p1'
 LASTTIME = 'b1'
