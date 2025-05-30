@@ -8,8 +8,9 @@ async def callme(bot:Bot, e:GroupMessageEvent):
     uid = int(e.get_user_id())
     for i in call_start:
         msg=msg.replace(i,"")
-    query=f"update G5000 set {data.NAME}=? where user_id== ?"
+    #query=f"update G5000 set {data.NAME}=? where user_id== ?"
+    query=f"update user set prename=? where uid== ?"
     args=(msg,uid,)
     data.sql(query,args)
-    res = f"(◍ ´꒳` ◍)店长的昵称审核成功啦，茉莉以后就叫你【{msg}】了哦~"
+    res = f"(*ﾟ∇ﾟ)明白啦，审核成功后茉莉就叫店长【{msg}】了哦~"
     return res

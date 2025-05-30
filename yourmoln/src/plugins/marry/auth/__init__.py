@@ -6,17 +6,6 @@ from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
 from api import reply, stamp_def
 import data
 
-try:
-    AUTH = data.sql("select * from auth")
-except data.sqlite3.OperationalError:
-    data.sql("""CREATE TABLE auth (
-            id   INTEGER PRIMARY KEY AUTOINCREMENT,
-            uid  INTEGER,
-            gid  INTEGER,
-            time INTEGER
-            );""")
-    
-
 get_auth_start={"授权申请","申请授权"}
 search_auth_match={"查授权"}
 getauthTime=on_startswith(get_auth_start,is_type(GroupMessageEvent),priority=10,block=True)
@@ -46,9 +35,13 @@ async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     if flag: #没有授权
         matcher.stop_propagation()
     else:
-        data.sql(f"INSERT OR IGNORE INTO G5000 \
-                 (user_id,group_id,{data.MEETTIME},{data.WHITELIST},a2,a7,a8) values \
-                 (?,5000,?,1,0,0,0)",
+        # data.sql(f"INSERT OR IGNORE INTO G5000 \
+        #          (user_id,group_id,{data.MEETTIME},{data.WHITELIST},a2,a7,a8) values \
+        #          (?,5000,?,1,0,0,0)",
+        #          (uid,stamp_def()[4]))#如果是新店长则添加数据
+        data.sql(f"INSERT OR IGNORE INTO user \
+                 (uid, meet) values \
+                 (?,?)",
                  (uid,stamp_def()[4]))#如果是新店长则添加数据
 
 @getauthTime.handle()

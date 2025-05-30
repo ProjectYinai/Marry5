@@ -24,7 +24,8 @@ async def tea(bot:Bot, e:GroupMessageEvent):
     data.addTeaTimes()
     stamp=api.stamp_def()
     
-    query=f"SELECT {data.LOVE},{data.TIMES},{data.LASTTIME},{data.NAME} FROM G5000 where user_id== ? or user_id== 1000"
+    #query=f"SELECT {data.LOVE},{data.TIMES},{data.LASTTIME},{data.NAME} FROM G5000 where user_id== ? or user_id== 1000"
+    query=f"SELECT love,etea,teatime,name FROM user where uid== ? or uid== 1"
     args=(uid,)
     rows = data.sql(query,args)
     order = rows[0][1]
@@ -34,13 +35,15 @@ async def tea(bot:Bot, e:GroupMessageEvent):
     res=res.replace('_n_','\n').replace('【店长】',name)
     if lasttime != stamp[4]:
         num=random.randint(24,40)
-        query=f"update G5000 set {data.LOVE}=?, {data.LASTTIME}=?, {data.TEATIMES}={data.TEATIMES}+1 where user_id== ?"
-        args=(love+num,stamp[4],uid,)
+        #query=f"update G5000 set {data.LOVE}=?, {data.LASTTIME}=?, {data.TEATIMES}={data.TEATIMES}+1 where user_id== ?"
+        query=f"update user set love=love+?, teatime=?, etea=etea+1 where uid== ?"
+        args=(num,stamp[4],uid,)
         data.sql(query,args)
         lv,nick = api.lv(love+num,name)
         res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}\n[好感度+{num}|今天的第{order}杯茉莉~]"
     else:
-        query=f"update G5000 set {data.TEATIMES}={data.TEATIMES}+1 where user_id== ?"
+        #query=f"update G5000 set {data.TEATIMES}={data.TEATIMES}+1 where user_id== ?"
+        query=f"update G5000 set etea=etea+1 where user_id== ?"
         args=(uid,)
         data.sql(query,args)
         lv,nick = api.lv(love,name)
