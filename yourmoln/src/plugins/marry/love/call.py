@@ -2,14 +2,14 @@ from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
 from nonebot.adapters import Bot
 import data,api
 call_start={"茉莉以后叫我","茉莉请叫我","茉莉叫我"}
-async def callme(bot:Bot, e:GroupMessageEvent):
+async def callme(bot:Bot, e:GroupMessageEvent) -> str:
+    """这个功能是申请昵称用哒"""
     msg = str(e.get_message())
     uid = int(e.get_user_id())
     for i in call_start:
         msg=msg.replace(i,"")
     if len(msg) >= 16: return "(*ﾟーﾟ)店长的名字太长啦，稍微改短一点吧~"
     fl = await api.myfriends()
-    #query=f"update G5000 set {data.NAME}=? where user_id== ?"
     stamp = api.stamp_def()
     query=f'SELECT nametime,name FROM user where uid = ?'
     args=(uid,)

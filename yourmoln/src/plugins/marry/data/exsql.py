@@ -6,14 +6,18 @@ import api
 connection = sqlite3.connect(f'{script_path}/tea_data.db')
 cursor = connection.cursor()
 def sql(query,args=()) -> list:
+    """这只是一个对sql进行简单封装的函数，确保每句sql都被预处理，不被坏人入侵"""
     cursor.execute(query, args)
     rows = cursor.fetchall()
     connection.commit()
     return rows
 def getLove(uid:int) -> tuple:
-    """lv,nick,love,name,teatimes,greettimes,meettime"""
+    """
+    lv,nick,love,name,teatimes,greettimes,meettime
+    获取一系列与好感度有关的信息，他们分别是
+    等级，等级计算出来的头衔，好感度，昵称，泡茶总次数，问好总次数，相遇时间
+    """
     uid=int(uid)
-    #query = f'SELECT {LOVE}, {NAME}, {TEATIMES}, {GREETTIMES}, {MEETTIME} FROM G5000 where user_id== ?'
     query = f'SELECT love, name, etea, egreet, meet FROM user where uid== ?'
     args=(uid,)
     cursor.execute(query, args)
@@ -23,14 +27,17 @@ def getLove(uid:int) -> tuple:
         name = '店长' if row[1] in [0,'0',None] else row[1]
         lv,nick = api.lv(row[0],name)
         return lv,nick,row[0],name,row[2],row[3],row[4]
-def addTeaTimes():
+def getWhite(uid:int) -> int:
+    """获取白名单等级，0位黑名单，1为普通用户"""
+    return sql("select white from user WHERE uid == ?",(uid,))[0][0]
+def addTeaTimes() -> None:
+    """为当天的茉莉杯数+1，隔天则重置"""
     day = api.stamp_def()[4]
-    #query = f"UPDATE G5000 SET {LASTTIME} = ?, {TIMES} = CASE WHEN {LASTTIME} = ? THEN {TIMES} + 1 ELSE 1 END WHERE user_id = 1000;"
     query = f"UPDATE user SET teatime = ?, etea = CASE WHEN teatime = ? THEN etea + 1 ELSE 1 END WHERE uid = 1;"
     cursor.execute(query,(day,day))
     connection.commit()
 def getTeaTimes() -> int:
-    #query = f'SELECT {TIMES} FROM G5000 where user_id== 1000'
+    """获取今天的总杯数"""
     query = f'SELECT etea FROM user where uid== 1'
     cursor.execute(query)
     rows = cursor.fetchall()

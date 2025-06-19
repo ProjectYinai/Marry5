@@ -9,19 +9,6 @@ rc = random.choice
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
 from nonebot.adapters import Bot
 import data,api
-# def _refresh(uid:int,k=0):#旧数据表方法
-#     """刷新问好时间"""
-#     if k==0:
-#         day = api.stamp_def()[4]
-#         query = f"UPDATE G5000 SET b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0, b7 = 0, b8 = 0, b9 = 0, b10 = 0, {data.HILASTTIME} = ?\
-#                 WHERE user_id = ? AND {data.HILASTTIME} != ? OR {data.HILASTTIME} IS NULL;"
-#         args = (day,uid,day)
-#     else:#强制刷新
-#         day = api.stamp_def()[4]
-#         query = f"UPDATE G5000 SET b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0, b7 = 0, b8 = 0, b9 = 0, b10 = 0, {data.HILASTTIME} = 0\
-#                 WHERE user_id = ?;"
-#         args = (uid,)
-#     data.sql(query,args)
 def refresh(uid:int,k=0):
     """刷新问好时间"""
     regreet="".join(['1']+['0' for i in greeting_dict.keys()])
@@ -48,7 +35,8 @@ def get_current_greeting_types():
             available_types.append("和")
     return available_types[:-1]
 
-async def hi(bot:Bot, e:GroupMessageEvent):
+async def hi(bot:Bot, e:GroupMessageEvent) -> str:
+    """这里是茉莉与店长打招呼的函数"""
     msg=str(e.get_message())
     uid=int(e.get_user_id())
     refresh(uid)
@@ -69,9 +57,6 @@ async def hi(bot:Bot, e:GroupMessageEvent):
                 name = '店长'
                 res = res.replace('_n_','\n').replace('【店长】',name)
                 return res
-        
-
-    
     # 从normalN消息组中随机选择一条消息
     messages = matched_greeting['message']['normalN']
     if not messages:  # 如果normalN为空，使用其他可用的消息组
@@ -79,10 +64,7 @@ async def hi(bot:Bot, e:GroupMessageEvent):
             if greeting_dict['message'][season]:
                 messages = greeting_dict['message'][season]
                 break
-    
     res = rc(messages)[0]  # 获取消息内容
-    
-    #query=f"SELECT {data.LOVE}, {data.NAME}, b2, b3, b4, b5, b6, b7, b8, b9, b10 FROM G5000 where user_id== ?"
     query=f"SELECT love, name, ifgreet FROM user where uid== ?"
     args=(uid,)
     rows = data.sql(query,args)
@@ -99,7 +81,7 @@ async def hi(bot:Bot, e:GroupMessageEvent):
         args=(num,ifgreet,uid,)
         data.sql(query,args)
         lv,nick = api.lv(love+num,name)
-        res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}\n[好感度+{num}]"
+        res = f"[Lv.{lv}-{nick}]\n{res}\n[好感度+{num}]"
     elif ifgreet[t] == '0':
         ifgreet[t] = '1'
         ifgreet=int("".join(ifgreet),2) 
@@ -107,7 +89,7 @@ async def hi(bot:Bot, e:GroupMessageEvent):
         args=(uid,)
         data.sql(query,args)
         lv,nick = api.lv(love,name)
-        res = f"[Lv.{lv}/0x{lv:x}-{nick}]\n{res}\n今天聊得真开心呢ww~"
+        res = f"[Lv.{lv}-{nick}]\n{res}\n今天聊得真开心呢ww~"
     else:
         res = f"(*ﾟーﾟ)【店长】今天已经说过[{msg}]啦~"
         return res

@@ -8,16 +8,17 @@ script_path = os.path.split(os.path.realpath(__file__))[0]
 json_data = open(f"{script_path}/lv.json",encoding="UTF-8").read()
 lv_list = json.loads(json_data)
 def reply(e:MessageEvent,msg:str):
-    #生成回复消息
+    """生成回复消息"""
     res=[{"type":"reply","data":{"id":str(e.message_id)}},{"type":"text","data":{"text":msg}}]
     return res
 def replyImg(e:MessageEvent,img:str):
-    #生成回复消息
+    """生成图片回复消息"""
     res=[{"type":"reply","data":{"id":str(e.message_id)}},{"type":"image","data":{"file":img}}]
     return res
 def lv(love:int,name='0'):
+    """计算好感度等级"""
     love = int(love)
-    lv = int((love*6)**0.5)
+    lv = int(((192*(192+love))**0.5-192)*100//1536)
     for i in lv_list[::-1]:
         if lv >= i['lv']:
             nick = i['nick']
@@ -25,19 +26,22 @@ def lv(love:int,name='0'):
     nick = nick.replace('【店长】',name)
     return lv,nick
 
-async def myfriends():
+async def myfriends(nc=False) -> list:
+    """获取好友列表的函数"""
     bot=get_bot()
-    fl = await bot.get_friend_list(no_cache=False)
+    fl = await bot.get_friend_list(no_cache=nc)
     friends=[i["user_id"] for i in fl]
     return friends
 
-async def mygroups():
+async def mygroups(nc=False) -> list:
+    """获取群聊列表的函数"""
     bot=get_bot()
-    gl = await bot.get_group_list()
+    gl = await bot.get_group_list(no_cache=nc)
     groups=[i["group_id"] for i in gl]
     return groups
 
 def stamp_def():
+    """很抽象的获取各类时间的函数"""
     birthday=1513972500
     time_stamp=int(time.time())
     time_interval=time_stamp-birthday

@@ -9,7 +9,8 @@ import requests
 get_auth_start={"授权申请","申请授权"}
 search_auth_start={"查授权"}
 getauthTime=on_startswith(get_auth_start,is_type(GroupMessageEvent),priority=10,block=True)
-authTime=on_message(is_type(GroupMessageEvent),priority=3,block=False)
+authTime=on_message(is_type(GroupMessageEvent),priority=5,block=False)
+whiteTime=on_message(is_type(GroupMessageEvent),priority=4,block=False)
 searchAuthTime=on_startswith(search_auth_start,is_type(GroupMessageEvent),priority=10,block=True)
 def getauth(gid):
     rows = data.sql("select uid from auth WHERE gid == ?",(gid,))
@@ -17,6 +18,11 @@ def getauth(gid):
         return False
     return rows[0][0]
 
+@whiteTime.handle()
+async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
+    w = data.getWhite(e.user_id)
+    if w < 1:
+        matcher.stop_propagation()
 @authTime.handle()
 async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     gid=e.group_id
@@ -33,9 +39,6 @@ async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
             pmsg=f"( 〞 0 ˄ 0 )错误代码：D-2-1。\n店长不是群聊({gid})的管理员或群主呢。\n(*ﾟーﾟ)店长请在成为群主或管理员后重新授权吧"
             m=[{"type":"text","data":{"text":pmsg}}]
             await bot.send_private_msg(user_id=i[0],message=m)
-    msg=gid
-    msg_o=reply(e,msg)
-    #await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
     if flag: #没有授权
         #删除群授权
         data.sql("DELETE FROM auth WHERE gid=?;",(gid,))
@@ -49,10 +52,6 @@ async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
             await bot.set_group_leave(group_id=gid)
         matcher.stop_propagation()
     else:
-        # data.sql(f"INSERT OR IGNORE INTO G5000 \
-        #          (user_id,group_id,{data.MEETTIME},{data.WHITELIST},a2,a7,a8) values \
-        #          (?,5000,?,1,0,0,0)",
-        #          (uid,stamp_def()[4]))#如果是新店长则添加数据
         data.sql(f"INSERT OR IGNORE INTO user \
                  (uid, meet) values \
                  (?,?)",
