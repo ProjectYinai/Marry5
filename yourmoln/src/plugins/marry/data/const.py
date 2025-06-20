@@ -1,7 +1,7 @@
 class USER:
     #永久数据
     uid:int = 'uid'#qq号
-    white:int = 'white'#白名单，1是好人
+    white:int = 'white'#白名单，1是好人，0是拉黑，2是管理员
     love:int = 'love'#好感度
     name:str = 'name'#自定义昵称
     prename:str = 'prename'#未审核的昵称
