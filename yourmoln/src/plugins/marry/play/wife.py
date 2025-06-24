@@ -1,11 +1,11 @@
 import time,random
 
 rc = random.choice
-from nonebot.adapters import Bot
+from nonebot.adapters import Bot, Message
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
 import data,api
 
-async def roll(bot:Bot, e:GroupMessageEvent) -> str:
+async def roll(bot:Bot, e:GroupMessageEvent) -> Message:
     gm = await api.myGroupMembers(gid=e.group_id)
     cgm=[]
     while len(cgm) == 0:
