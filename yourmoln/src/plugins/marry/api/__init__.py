@@ -2,7 +2,7 @@ from nonebot import get_bot
 from nonebot.adapters import Bot, Event, Message # type: ignore
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent, MessageEvent
 import time,datetime
-import json,os,random
+import json,os,random,operator
 import data
 script_path = os.path.split(os.path.realpath(__file__))[0]
 json_data = open(f"{script_path}/lv.json",encoding="UTF-8").read()
@@ -39,6 +39,15 @@ async def mygroups(nc=False) -> list:
     gl = await bot.get_group_list(no_cache=nc)
     groups=[i["group_id"] for i in gl]
     return groups
+
+async def myGroupMembers(gid,nc=False) -> list[tuple[int,str,int]]:
+    """qid,name,sendtime
+    获取群成员列表的函数,按最近发言时间正序"""
+    bot=get_bot()
+    gm = await bot.get_group_member_list(group_id=gid,no_cache=nc)
+    gm=[(i["user_id"],i["card"],int(i["last_sent_time"])) if i["card"] != "" else (i["user_id"],i["nickname"],int(i["last_sent_time"])) for i in gm]
+    gm = sorted(gm, key=operator.itemgetter(2),reverse=True)
+    return gm
 
 def stamp_def():
     """很抽象的获取各类时间的函数"""
