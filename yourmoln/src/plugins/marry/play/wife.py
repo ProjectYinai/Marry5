@@ -8,7 +8,7 @@ import data,api
 async def roll(bot:Bot, e:GroupMessageEvent) -> Message:
     gm = await api.myGroupMembers(gid=e.group_id)
     cgm=[]
-    while len(cgm) == 0:
+    for i in range(2):
         for i in range(len(gm)):
             if (int(time.time()) - gm[i][2]) > 3600*12:
                 break
