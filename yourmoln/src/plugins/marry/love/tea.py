@@ -15,6 +15,7 @@ async def tea(bot:Bot, e:GroupMessageEvent) -> str:
     if msg == "泡茉莉":
         kind = rc(list(tea_dict['kinds_of_tea'].items()))
         res:str = rc(tea_dict[kind[1]]['group'])
+        msg = "泡"+tea_dict[kind[1]]['type']
     else:
         try: 
             kind = tea_dict['kinds_of_tea'][msg]
@@ -33,6 +34,7 @@ async def tea(bot:Bot, e:GroupMessageEvent) -> str:
     lasttime = rows[1][2]
     name = '店长' if rows[1][3] in [0,'0',None] else rows[1][3]
     res=res.replace('_n_','\n').replace('【店长】',name)
+    fs = await api.myfriends()
     if lasttime != stamp[4]:
         num=random.randint(24,40)
         query=f"update user set love=love+?, teatime=?, etea=etea+1 where uid== ?"
@@ -40,13 +42,16 @@ async def tea(bot:Bot, e:GroupMessageEvent) -> str:
         data.sql(query,args)
         lv,nick = api.lv(love+num,name)
         res = f"[Lv.{lv}-{nick}]\n{res}\n[好感度+{num}|今天的第{order}杯茉莉~]"
+        if num >= (40+(16*(50-(lv if lv < 100 else 100))*0.01)) and uid in fs:
+            voice=[{"type": "record","data": {"file": f"file:///{script_path}/voice/{msg}.wav"}}]
+            try: await bot.send_private_msg(user_id=uid,message=voice)
+            except Exception as e: print(e)
     else:
-        query=f"update G5000 set etea=etea+1 where user_id== ?"
+        query=f"update user set etea=etea+1 where uid== ?"
         args=(uid,)
         data.sql(query,args)
         lv,nick = api.lv(love,name)
         res = f"[Lv.{lv}-{nick}]\n{res}\n[今天的第{order}杯茉莉~]"
-    fs = await api.myfriends()
     if uid in fs:
         pmsg=rc(tea_dict[kind[1]]['message']["normalN"])[0]
         pmsg=pmsg.replace('_n_','\n').replace('【店长】',name)
