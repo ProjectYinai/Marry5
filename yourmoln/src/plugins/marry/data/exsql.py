@@ -11,6 +11,7 @@ def sql(query,args=()) -> list:
     rows = cursor.fetchall()
     connection.commit()
     return rows
+
 def getLove(uid:int) -> tuple:
     """
     lv,nick,love,name,teatimes,greettimes,meettime
@@ -20,31 +21,37 @@ def getLove(uid:int) -> tuple:
     uid=int(uid)
     query = f'SELECT love, name, etea, egreet, meet FROM user where uid== ?'
     args=(uid,)
-    cursor.execute(query, args)
-    connection.commit()
-    rows = cursor.fetchall()
+    rows = sql(query, args)
     for row in rows:
         name = '店长' if row[1] in [0,'0',None] else row[1]
         lv,nick = api.lv(row[0],name)
         return lv,nick,row[0],name,row[2],row[3],row[4]
+    
 def getWhite(uid:int) -> int:
     """获取白名单等级，0位黑名单，1为普通用户"""
     return sql("select white from user WHERE uid == ?",(uid,))[0][0]
+
 def addTeaTimes() -> None:
     """为当天的茉莉杯数+1，隔天则重置"""
     day = api.stamp_def()[4]
-    query = f"UPDATE user SET teatime = ?, etea = CASE WHEN teatime = ? THEN etea + 1 ELSE 1 END WHERE uid = 1;"
-    cursor.execute(query,(day,day))
-    connection.commit()
+    query = "UPDATE user SET teatime = ?, etea = CASE WHEN teatime = ? THEN etea + 1 ELSE 1 END WHERE uid = 1;"
+    sql(query,(day,day))
+
 def getTeaTimes() -> int:
     """获取今天的总杯数"""
-    query = f'SELECT etea FROM user where uid== 1'
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    connection.commit()
+    rows = sql('SELECT etea FROM user where uid== 1')
     for row in rows:
         return row[0]
     
+def getAdminGroups() -> list:
+    """获取审核群列表"""
+    return map(lambda x: x[0],sql("SELECT gid FROM auth where uid== 1"))
+
+def getMainGroups() -> list:
+    """获取主群列表"""
+    return map(lambda x: x[0],sql("SELECT gid FROM auth where uid== 2"))
+
+
 #用户数据表不存在则创建
 sql("""CREATE TABLE IF NOT EXISTS user (
         uid      INTEGER PRIMARY KEY,

@@ -6,7 +6,7 @@ from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
 from api import reply, stamp_def, mygroups
 import data
 import requests
-get_auth_start={"授权申请","申请授权"}
+get_auth_start={"授权申请","申请授权","申请领养"}
 search_auth_start={"查授权"}
 getauthTime=on_startswith(get_auth_start,is_type(GroupMessageEvent),priority=10,block=True)
 authTime=on_message(is_type(GroupMessageEvent),priority=5,block=False)
@@ -15,7 +15,7 @@ searchAuthTime=on_startswith(search_auth_start,is_type(GroupMessageEvent),priori
 def getauth(gid):
     rows = data.sql("select uid from auth WHERE gid == ?",(gid,))
     if len(rows) < 1:
-        return False
+        return 0
     return rows[0][0]
 
 @whiteTime.handle()
@@ -30,6 +30,7 @@ async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     flag = 1
     at = data.sql("select uid from auth WHERE gid == ?",(gid,))
     for i in at:
+        if int(i[0]) < 10000: return #是特殊群则不检测
         role = await bot.get_group_member_info(group_id=gid,user_id=i[0],no_cache=False)
         role = role['role']
         if role in ['admin','owner']:
@@ -63,13 +64,14 @@ async def getauthFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     uid=int(e.get_user_id())
     for i in get_auth_start:
         msg_i = msg_i.replace(i,'')
-    lv,nick,love,name = data.getLove(uid)
-    who = getauth(msg_i)
-    if lv<0x100:
+    lv = data.getLove(uid)[0]
+    if e.group_id not in data.getMainGroups():
+        msg="( 〞 0 ˄ 0 )错误代码：D-1-6。\n请添加主群后领养。\nps:发送茉莉帮助就能看到主群的二维码哦~"
+    elif lv<100:
         msg="( 〞 0 ˄ 0 )错误代码：D-1-5。\n领养人好感度等级未到100级！"
-    elif msg_i not in await mygroups():
+    elif int(msg_i) not in (gl := await mygroups()):
         msg="( 〞 0 ˄ 0 )错误代码：D-1-1。\n茉莉不在该群内。"
-    elif who:
+    elif (who := getauth(msg_i)) >= 10000:
         msg="( 〞 0 ˄ 0 )错误代码：D-1-3。\n本群已授权且已存在领养人。若想更改领养人，请联系茉莉的主人音奈更改。\n不过更新了一下pjsk的授权~"
     else:
         role = await bot.get_group_member_info(group_id=msg_i,user_id=uid,no_cache=False)

@@ -29,7 +29,7 @@ async def callme(bot:Bot, e:GroupMessageEvent) -> str:
     am1=[{"type":"text","data":{"text":am1}}]
     am2=f"/同意昵称 {uid} {msg}"
     am2=[{"type":"text","data":{"text":am2}}]
-    for i in data.admin.group:
+    for i in data.getAdminGroups():
         await bot.send_group_msg(group_id=str(i),message=am1)
         await bot.send_group_msg(group_id=str(i),message=am2)
     return res

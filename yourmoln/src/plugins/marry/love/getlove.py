@@ -4,7 +4,7 @@ import data, api
 async def getLove(bot:Bot, e:GroupMessageEvent):
     """这个功能是获取我的好感度"""
     uid = int(e.get_user_id())
-    lv,nick,love,name,teatimes,greettimes,meettime = data.getLove(uid)
+    lv,nick,love,name,teatimes,greettimes,meettime = data.getLove(uid)[:7]
     meettime = api.stamp_def()[4] - meettime
     res = f"茉莉对店长大人的好感度超级大呢！\n大概{love}点吧ww~~"
     res = res.replace('_n_','\n').replace('【店长】',name)

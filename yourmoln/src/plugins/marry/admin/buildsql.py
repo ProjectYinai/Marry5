@@ -42,7 +42,7 @@ def _build(input:str,sk:str,op:str):
                     #everytea是所有人当天的喝茶次数
                     #其它的也可以类推哦，uid1可以记录下茉莉自己的数据
                 class auth:
-                    uid:int = 'uid'#qq号
+                    uid:int = 'uid'#qq号，如果uid为1则为审核群，为2则为主群
                     gid:int = 'gid'#群号
                     time:int = 'time'#授权时间
                     

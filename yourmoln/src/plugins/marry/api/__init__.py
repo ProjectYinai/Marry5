@@ -36,7 +36,7 @@ async def myfriends(nc=False) -> list:
 async def mygroups(nc=False) -> list:
     """获取群聊列表的函数"""
     bot=get_bot()
-    gl = await bot.get_group_list(no_cache=nc)
+    gl = await bot.get_group_list()
     groups=[i["group_id"] for i in gl]
     return groups
 
