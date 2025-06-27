@@ -29,7 +29,10 @@ def getLove(uid:int) -> tuple:
     
 def getWhite(uid:int) -> int:
     """获取白名单等级，0位黑名单，1为普通用户"""
-    return sql("select white from user WHERE uid == ?",(uid,))[0][0]
+    try:
+        return sql("select white from user WHERE uid == ?",(uid,))[0][0]
+    except:
+        return 0
 
 def addTeaTimes() -> None:
     """为当天的茉莉杯数+1，隔天则重置"""

@@ -30,7 +30,9 @@ async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     flag = 1
     at = data.sql("select uid from auth WHERE gid == ?",(gid,))
     for i in at:
-        if int(i[0]) < 10000: return #是特殊群则不检测
+        if int(i[0]) < 10000: 
+            flag=0 #是特殊群则不检测
+            break
         role = await bot.get_group_member_info(group_id=gid,user_id=i[0],no_cache=False)
         role = role['role']
         if role in ['admin','owner']:
@@ -50,7 +52,8 @@ async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
         lastsent = await bot.get_group_member_info(group_id=gid,user_id=bot.self_id,no_cache=False)
         lastsent = int(lastsent["last_sent_time"])
         if (stamp_def()[0] - lastsent) > 36000:
-            await bot.set_group_leave(group_id=gid)
+            pass
+            #await bot.set_group_leave(group_id=gid)
         matcher.stop_propagation()
     else:
         data.sql(f"INSERT OR IGNORE INTO user \
