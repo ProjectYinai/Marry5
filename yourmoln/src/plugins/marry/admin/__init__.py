@@ -5,23 +5,16 @@ from nonebot.rule import is_type
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
 import data,api
 from .execute import buildcmd
-admin1_match={"重置泡茶时间"}
+
 namesure = {"/同意昵称","/拒绝昵称"}
 white={"/设置白名单等级","/设白"}
 bcmd={"/生成指令"}
 excmd={"/执行指令"}
-admin1Time=on_fullmatch(admin1_match,is_type(GroupMessageEvent),priority=3,block=True)
+
 nameSureTime=on_startswith(namesure,is_type(GroupMessageEvent),priority=3,block=True)
 whiteTime=on_startswith(white,is_type(GroupMessageEvent),priority=3,block=True)
 bcmdTime=on_startswith(bcmd,is_type(GroupMessageEvent),priority=1,block=True)
 excmdTime=on_startswith(excmd,is_type(GroupMessageEvent),priority=1,block=True)
-@admin1Time.handle()
-async def teaFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
-    query="update G5000 set b1=1 where user_id== 3402824831"
-    data.sql(query)
-    msg="重置成功"
-    msg_o=api.reply(e,msg)
-    await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
 
 @nameSureTime.handle()
 async def nameSureFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
