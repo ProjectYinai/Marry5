@@ -16,7 +16,7 @@ def getauth(gid):
     rows = data.sql("select uid from auth WHERE gid == ?",(gid,))
     if len(rows) < 1:
         return 0
-    return rows[0][0]
+    return rows[-1][0]
 
 @whiteTime.handle()
 async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
@@ -33,9 +33,14 @@ async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
         if int(i[0]) < 10000: 
             flag=0 #是特殊群则不检测
             break
-        role = await bot.get_group_member_info(group_id=gid,user_id=i[0],no_cache=False)
-        role = role['role']
-        if role in ['admin','owner']:
+        try: role = await bot.get_group_member_info(group_id=gid,user_id=i[0],no_cache=False)
+        except: role = 0
+        else: role = role['role']
+        if role == 0:
+            pmsg=f"( 〞 0 ˄ 0 )错误代码：D-2-2。\n店长不是群聊({gid})的成员呢。\n(*ﾟーﾟ)店长请在成为群主或管理员后重新授权吧"
+            m=[{"type":"text","data":{"text":pmsg}}]
+            await bot.send_private_msg(user_id=i[0],message=m)
+        elif role in ['admin','owner']:
             flag=0
             break
         else:
@@ -77,9 +82,11 @@ async def getauthFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     elif (who := getauth(msg_i)) >= 10000:
         msg="( 〞 0 ˄ 0 )错误代码：D-1-3。\n本群已授权且已存在领养人。若想更改领养人，请联系茉莉的主人音奈更改。\n不过更新了一下pjsk的授权~"
     else:
-        role = await bot.get_group_member_info(group_id=msg_i,user_id=uid,no_cache=False)
-        role = role['role']
-        if role not in ['admin','owner']:
+        try: role = await bot.get_group_member_info(group_id=msg_i,user_id=uid,no_cache=False)
+        except: role = 0
+        else: role = role['role']
+        if role == 0: msg=f"( 〞 0 ˄ 0 )错误代码：D-2-2。\n店长不是群聊({msg_i})的成员呢。"
+        elif role not in ['admin','owner']:
             msg=f"( 〞 0 ˄ 0 )错误代码：D-2-1。\n店长不是群聊({msg_i})的管理员或群主呢。"
         else:
             time = stamp_def()[0]
@@ -102,8 +109,8 @@ async def searchAuthFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
         gid=int(msg_i)
     who = getauth(gid)
     if who:
-        msg = f"授权群号:{gid}\n授权查询：已授权\n领养人：{who}"
+        msg = f"授权群号:{gid}\n授权查询:已授权\n领养の人:{who}"
     else:
-        msg = f"授权群号:{gid}\n授权查询：未授权"
+        msg = f"授权群号:{gid}\n授权查询:未授权"
     msg_o=reply(e,msg)
     await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)

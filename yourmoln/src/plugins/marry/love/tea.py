@@ -18,11 +18,12 @@ async def tea(bot:Bot, e:GroupMessageEvent) -> str:
         msg = "泡"+tea_dict[kind[1]]['type']
     else:
         try: 
-            kind = tea_dict['kinds_of_tea'][msg]
-            res:str = rc(tea_dict[kind]['group'])
+            kind = (0,tea_dict['kinds_of_tea'][msg])
+            res:str = rc(tea_dict[kind[1]]['group'])
         except:
             kind = rc(list(tea_dict['kinds_of_tea'].items()))
             res:str = rc(tea_dict[kind[1]]['group'])
+            msg = "泡"+tea_dict[kind[1]]['type']
     data.addTeaTimes()
     stamp=api.stamp_def()
     

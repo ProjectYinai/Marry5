@@ -86,7 +86,7 @@ async def hi(bot:Bot, e:GroupMessageEvent) -> str:
         ifgreet[t] = '1'
         ifgreet=int("".join(ifgreet),2) 
         query=f"update user set ifgreet=?, egreet=egreet+1 where uid== ?"
-        args=(uid,)
+        args=(ifgreet,uid,)
         data.sql(query,args)
         lv,nick = api.lv(love,name)
         res = f"[Lv.{lv}-{nick}]\n{res}\n今天聊得真开心呢ww~"

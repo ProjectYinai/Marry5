@@ -5,16 +5,19 @@ from nonebot.rule import is_type
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
 import data,api
 from .execute import buildcmd
+import json
 
 namesure = {"/同意昵称","/拒绝昵称"}
 white={"/设置白名单等级","/设白"}
 bcmd={"/生成指令"}
 excmd={"/执行指令"}
+exsend={"/发送群消息"}
 
 nameSureTime=on_startswith(namesure,is_type(GroupMessageEvent),priority=3,block=True)
 whiteTime=on_startswith(white,is_type(GroupMessageEvent),priority=3,block=True)
 bcmdTime=on_startswith(bcmd,is_type(GroupMessageEvent),priority=1,block=True)
 excmdTime=on_startswith(excmd,is_type(GroupMessageEvent),priority=1,block=True)
+exsendTime=on_startswith(exsend,is_type(GroupMessageEvent),priority=1,block=True)
 
 @nameSureTime.handle()
 async def nameSureFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
@@ -44,7 +47,7 @@ async def nameSureFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
         elif cmd[2] == rows[0][0] and cmd[0]=='/拒绝昵称':
             msg=f"已拒绝({cmd[1]})的昵称改为【{cmd[2]}】"
             query="update user set prename=NULL where uid = ?"
-            data.sql(query,(cmd[1]))
+            data.sql(query,(cmd[1],))
             fs = await api.myfriends()
             if cmd[1] in fs:
                 pmsg=f"( 〞 0 ˄ 0 )店长的昵称审核失败！若多次设置违规昵称，茉莉可能会不理店长了哦！"
@@ -93,4 +96,20 @@ async def excmdFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
         except:
             msg="执行失败"
         msg_o=api.reply(e,msg)
+        await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
+
+@exsendTime.handle()
+async def exsendFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
+    if str(e.user_id) in data.admin.id or data.getWhite(e.user_id)>=10:
+        cmd = str(e.get_message()).split(" ")
+        if len(cmd)==1 or cmd[1] == '-h':
+            msg='/发送群消息 [群号] [CQ格式消息]'
+            msg_o=api.reply(e,msg)
+            await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
+            return
+        sgid = cmd[1]
+        send = "".join(cmd[2:])
+        try: await bot.send_group_msg(group_id=str(sgid),message=[json.loads(send)])
+        except Exception as exc: msg_o=api.reply(e,f"消息：{send}\n发送失败\n{exc}")
+        else: msg_o=api.reply(e,"发送成功")
         await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
