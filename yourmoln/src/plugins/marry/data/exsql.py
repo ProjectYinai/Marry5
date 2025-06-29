@@ -32,7 +32,7 @@ def getWhite(uid:int) -> int:
     try:
         return sql("select white from user WHERE uid == ?",(uid,))[0][0]
     except:
-        return 0
+        return 1
 
 def addTeaTimes() -> None:
     """为当天的茉莉杯数+1，隔天则重置"""

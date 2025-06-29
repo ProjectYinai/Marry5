@@ -31,9 +31,9 @@ async def run_every_4_day():
 @scheduler.scheduled_job("cron", hour="23",minute="55",second="0", id="h_end")
 async def run_every_5_day():
     print("SCHEDULER:h_end")
-    haruki_url="http://43.139.144.147:6099/api/OB11Config/SetConfig"
-    payload = {"config":"{\"network\":{\"httpServers\":[{\"enable\":true,\"name\":\"http\",\"host\":\"127.0.0.1\",\"port\":3000,\"enableCors\":true,\"enableWebsocket\":true,\"messagePostFormat\":\"array\",\"token\":\"\",\"debug\":true}],\"httpSseServers\":[],\"httpClients\":[],\"websocketServers\":[],\"websocketClients\":[{\"enable\":true,\"name\":\"marry\",\"url\":\"ws://127.0.0.1:3010/onebot/v11/ws\",\"reportSelfMessage\":false,\"messagePostFormat\":\"array\",\"token\":\"marry\",\"debug\":false,\"heartInterval\":30000,\"reconnectInterval\":5000},{\"enable\":false,\"name\":\"haruki\",\"url\":\"ws://127.0.0.1:2525/ws\",\"reportSelfMessage\":false,\"messagePostFormat\":\"array\",\"token\":\"\",\"debug\":false,\"heartInterval\":30000,\"reconnectInterval\":30000}],\"plugins\":[]},\"musicSignUrl\":\"\",\"enableLocalFile2Url\":false,\"parseMultMsg\":false}"}
-    requests.post(haruki_url, json=payload)
+    # haruki_url="http://43.139.144.147:6099/api/OB11Config/SetConfig"
+    # payload = {"config":"{\"network\":{\"httpServers\":[{\"enable\":true,\"name\":\"http\",\"host\":\"127.0.0.1\",\"port\":3000,\"enableCors\":true,\"enableWebsocket\":true,\"messagePostFormat\":\"array\",\"token\":\"\",\"debug\":true}],\"httpSseServers\":[],\"httpClients\":[],\"websocketServers\":[],\"websocketClients\":[{\"enable\":true,\"name\":\"marry\",\"url\":\"ws://127.0.0.1:3010/onebot/v11/ws\",\"reportSelfMessage\":false,\"messagePostFormat\":\"array\",\"token\":\"marry\",\"debug\":false,\"heartInterval\":30000,\"reconnectInterval\":5000},{\"enable\":false,\"name\":\"haruki\",\"url\":\"ws://127.0.0.1:2525/ws\",\"reportSelfMessage\":false,\"messagePostFormat\":\"array\",\"token\":\"\",\"debug\":false,\"heartInterval\":30000,\"reconnectInterval\":30000}],\"plugins\":[]},\"musicSignUrl\":\"\",\"enableLocalFile2Url\":false,\"parseMultMsg\":false}"}
+    # requests.post(haruki_url, json=payload)
     bot = get_bot()
     msg_t="(*ﾟ∇ﾟ)店长们晚安哦——"
     await bot.send_group_msg(group_id=str(555679990),message=msg_t)
@@ -41,9 +41,9 @@ async def run_every_5_day():
 @scheduler.scheduled_job("cron", hour="5",minute="55",second="0", id="h_start")
 async def run_every_6_day():
     print("SCHEDULER:h_start")
-    haruki_url="http://43.139.144.147:6099/api/OB11Config/SetConfig"
-    payload = {"config":"{\"network\":{\"httpServers\":[{\"enable\":true,\"name\":\"http\",\"host\":\"127.0.0.1\",\"port\":3000,\"enableCors\":true,\"enableWebsocket\":true,\"messagePostFormat\":\"array\",\"token\":\"\",\"debug\":true}],\"httpSseServers\":[],\"httpClients\":[],\"websocketServers\":[],\"websocketClients\":[{\"enable\":true,\"name\":\"marry\",\"url\":\"ws://127.0.0.1:3010/onebot/v11/ws\",\"reportSelfMessage\":false,\"messagePostFormat\":\"array\",\"token\":\"marry\",\"debug\":false,\"heartInterval\":30000,\"reconnectInterval\":5000},{\"enable\":true,\"name\":\"haruki\",\"url\":\"ws://127.0.0.1:2525/ws\",\"reportSelfMessage\":false,\"messagePostFormat\":\"array\",\"token\":\"\",\"debug\":false,\"heartInterval\":30000,\"reconnectInterval\":30000}],\"plugins\":[]},\"musicSignUrl\":\"\",\"enableLocalFile2Url\":false,\"parseMultMsg\":false}"}
-    requests.post(haruki_url, json=payload)
+    # haruki_url="http://43.139.144.147:6099/api/OB11Config/SetConfig"
+    # payload = {"config":"{\"network\":{\"httpServers\":[{\"enable\":true,\"name\":\"http\",\"host\":\"127.0.0.1\",\"port\":3000,\"enableCors\":true,\"enableWebsocket\":true,\"messagePostFormat\":\"array\",\"token\":\"\",\"debug\":true}],\"httpSseServers\":[],\"httpClients\":[],\"websocketServers\":[],\"websocketClients\":[{\"enable\":true,\"name\":\"marry\",\"url\":\"ws://127.0.0.1:3010/onebot/v11/ws\",\"reportSelfMessage\":false,\"messagePostFormat\":\"array\",\"token\":\"marry\",\"debug\":false,\"heartInterval\":30000,\"reconnectInterval\":5000},{\"enable\":true,\"name\":\"haruki\",\"url\":\"ws://127.0.0.1:2525/ws\",\"reportSelfMessage\":false,\"messagePostFormat\":\"array\",\"token\":\"\",\"debug\":false,\"heartInterval\":30000,\"reconnectInterval\":30000}],\"plugins\":[]},\"musicSignUrl\":\"\",\"enableLocalFile2Url\":false,\"parseMultMsg\":false}"}
+    # requests.post(haruki_url, json=payload)
     bot = get_bot()
     msg_t="(*ﾟ∇ﾟ)店长们早上好——"
     await bot.send_group_msg(group_id=str(555679990),message=msg_t)

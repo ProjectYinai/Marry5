@@ -31,6 +31,7 @@ def get_current_greeting_types():
     
     for greeting in greeting_dict.values():
         if current_hour in greeting['range']:
+            if greeting['type'] == "晚安": continue
             available_types.append(f"[{greeting['type']}]")
             available_types.append("和")
     return available_types[:-1]

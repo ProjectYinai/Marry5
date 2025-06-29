@@ -5,7 +5,7 @@ from nonebot.rule import is_type
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
 from api import reply, stamp_def, mygroups
 import data
-import requests
+import requests,datetime
 get_auth_start={"授权申请","申请授权","申请领养"}
 search_auth_start={"查授权"}
 getauthTime=on_startswith(get_auth_start,is_type(GroupMessageEvent),priority=10,block=True)
@@ -73,14 +73,21 @@ async def getauthFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     for i in get_auth_start:
         msg_i = msg_i.replace(i,'')
     lv = data.getLove(uid)[0]
-    if e.group_id not in data.getMainGroups():
-        msg="( 〞 0 ˄ 0 )错误代码：D-1-6。\n请添加主群后领养。\nps:发送茉莉帮助就能看到主群的二维码哦~"
+    now = datetime.datetime.now()
+    #if now.hour <=5 or (now.hour==23 and now.minute>=50):
+    if (stamp_def()[1]-7200)%86400 >= 64800:
+        msg="( 〞 0 ˄ 0 )错误代码：D-1-5。\n茉莉已经睡觉啦，请早上6点之后再申请授权哦~"
+    elif e.group_id not in data.getMainGroups():
+        msg="( 〞 0 ˄ 0 )错误代码：D-1-4。\n请添加主群后领养。\nps:发送茉莉帮助就能看到主群的二维码哦~"
     elif lv<100:
-        msg="( 〞 0 ˄ 0 )错误代码：D-1-5。\n领养人好感度等级未到100级！"
+        msg="( 〞 0 ˄ 0 )错误代码：D-1-3。\n领养人好感度等级未到100级！"
     elif int(msg_i) not in (gl := await mygroups()):
-        msg="( 〞 0 ˄ 0 )错误代码：D-1-1。\n茉莉不在该群内。"
+        msg="( 〞 0 ˄ 0 )错误代码：D-1-2。\n茉莉不在该群内。"
     elif (who := getauth(msg_i)) >= 10000:
-        msg="( 〞 0 ˄ 0 )错误代码：D-1-3。\n本群已授权且已存在领养人。若想更改领养人，请联系茉莉的主人音奈更改。\n不过更新了一下pjsk的授权~"
+        msg="( 〞 0 ˄ 0 )错误代码：D-1-1。\n本群已授权且已存在领养人。若想更改领养人，请联系茉莉的主人音奈更改。\n不过更新了一下pjsk的授权~"
+        haruki_url="http://127.0.0.1:2525/haruki_client/controller/add_whitelist"
+        payload = {"module":"pjsk","group_ids":[int(msg_i)]}
+        requests.post(haruki_url, json=payload)
     else:
         try: role = await bot.get_group_member_info(group_id=msg_i,user_id=uid,no_cache=False)
         except: role = 0

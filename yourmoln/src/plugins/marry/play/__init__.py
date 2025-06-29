@@ -12,20 +12,22 @@ def choose(kind:str):
     cl = json.loads(json_data)
     return random.choice(cl)
 
-from .wife import roll
+from .wife import roll,marry,rank
 
 help_match={"茉莉帮助","茉莉使用手册","如何与茉莉玩","茉莉指令大全","茉莉使用说明书","茉莉和我玩"}
 eat_match={"茉莉今天吃什么", "茉莉吃什么"}
 drink_match={"茉莉今天喝什么", "茉莉喝什么"}
 draw_match={"茉莉帮我抽个签", "茉莉抽个签", "茉莉抽签"}
-roll_wife_match={"抽群老婆","抽群老婆十连","群老婆十连","群老婆排行榜"}
-roll_wife_start={"娶群老婆"}
+roll_wife_match={"抽群老婆","抽群老婆十连","群老婆十连"}
+wife_rank_match={"群老婆排行榜"}
+marry_wife_start={"娶群老婆"}
 helpTime=on_fullmatch(help_match,is_type(GroupMessageEvent),priority=10,block=True)
 eatTime=on_fullmatch(eat_match,is_type(GroupMessageEvent),priority=10,block=True)
 drinkTime=on_fullmatch(drink_match,is_type(GroupMessageEvent),priority=10,block=True)
 drawTime=on_fullmatch(draw_match,is_type(GroupMessageEvent),priority=10,block=True)
-rollWifeTimeM=on_fullmatch(roll_wife_match,is_type(GroupMessageEvent),priority=10,block=True)
-rollWifeTimeS=on_startswith(roll_wife_start,is_type(GroupMessageEvent),priority=10,block=True)
+rollWifeTime=on_fullmatch(roll_wife_match,is_type(GroupMessageEvent),priority=10,block=True)
+wifeRankTime=on_fullmatch(wife_rank_match,is_type(GroupMessageEvent),priority=10,block=True)
+marryWifeTime=on_startswith(marry_wife_start,is_type(GroupMessageEvent),priority=10,block=True)
 pokeTime=on_notice(is_type(PokeNotifyEvent),priority=20,block=True)
 
 @helpTime.handle()
@@ -53,10 +55,19 @@ async def drawFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     msg_o=reply(e,msg)
     await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
 
-@rollWifeTimeM.handle()
-@rollWifeTimeS.handle()
+@rollWifeTime.handle()
 async def rollWifeFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     msg=await roll(bot,e)
+    await bot.send_group_msg(group_id=str(e.group_id),message=msg)
+
+@wifeRankTime.handle()
+async def wifeRankFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
+    msg=await rank(bot,e)
+    await bot.send_group_msg(group_id=str(e.group_id),message=msg)
+
+@marryWifeTime.handle()
+async def marryWifeFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
+    msg=await marry(bot,e)
     await bot.send_group_msg(group_id=str(e.group_id),message=msg)
 
 @pokeTime.handle()
