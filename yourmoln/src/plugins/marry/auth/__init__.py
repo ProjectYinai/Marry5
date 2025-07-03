@@ -79,8 +79,8 @@ async def getauthFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
         msg="( 〞 0 ˄ 0 )错误代码：D-1-5。\n茉莉已经睡觉啦，请早上6点之后再申请授权哦~"
     elif e.group_id not in data.getMainGroups():
         msg="( 〞 0 ˄ 0 )错误代码：D-1-4。\n请添加主群后领养。\nps:发送茉莉帮助就能看到主群的二维码哦~"
-    elif lv<100:
-        msg="( 〞 0 ˄ 0 )错误代码：D-1-3。\n领养人好感度等级未到100级！"
+    elif lv<70:
+        msg="( 〞 0 ˄ 0 )错误代码：D-1-3。\n领养人好感度等级未到70级！"
     elif int(msg_i) not in (gl := await mygroups()):
         msg="( 〞 0 ˄ 0 )错误代码：D-1-2。\n茉莉不在该群内。"
     elif (who := getauth(msg_i)) >= 10000:
@@ -92,9 +92,16 @@ async def getauthFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
         try: role = await bot.get_group_member_info(group_id=msg_i,user_id=uid,no_cache=False)
         except: role = 0
         else: role = role['role']
+        try: gml = await bot.get_group_member_list(group_id=gid,no_cache=False)
+        except: gml = 1
+        else: gml = len(gml)
         if role == 0: msg=f"( 〞 0 ˄ 0 )错误代码：D-2-2。\n店长不是群聊({msg_i})的成员呢。"
         elif role not in ['admin','owner']:
             msg=f"( 〞 0 ˄ 0 )错误代码：D-2-1。\n店长不是群聊({msg_i})的管理员或群主呢。"
+        elif role == 'admin' and lv < 100:
+            msg="( 〞 0 ˄ 0 )错误代码：D-1-6。\n领养人作为管理员好感度等级未到100级！"
+        elif gml > 500 and role != 'owner':
+            msg="( 〞 0 ˄ 0 )错误代码：D-2-3。\n群聊人数大于500，领养人需为群主！"
         else:
             time = stamp_def()[0]
             data.sql("INSERT INTO auth (uid, gid, time) VALUES (?, ?, ?)",(uid,msg_i,time))

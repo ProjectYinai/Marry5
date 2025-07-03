@@ -92,7 +92,8 @@ async def hi(bot:Bot, e:GroupMessageEvent) -> str:
         lv,nick = api.lv(love,name)
         res = f"[Lv.{lv}-{nick}]\n{res}\n今天聊得真开心呢ww~"
     else:
-        res = f"(*ﾟーﾟ)【店长】今天已经说过[{msg}]啦~"
+        lv,nick = api.lv(love,name)
+        res = f"[Lv.{lv}-{nick}]\n(*ﾟーﾟ)店长今天已经说过[{msg}]啦~"
         return res
     fs = await api.myfriends()
     if uid in fs:

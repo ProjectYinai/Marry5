@@ -43,7 +43,7 @@ async def tea(bot:Bot, e:GroupMessageEvent) -> str:
         data.sql(query,args)
         lv,nick = api.lv(love+num,name)
         res = f"[Lv.{lv}-{nick}]\n{res}\n[好感度+{num}|今天的第{order}杯茉莉~]"
-        if num >= (40+(16*(50-(lv if lv < 100 else 100))*0.01)) and uid in fs:
+        if (num >= (40+(16*(50-(lv if lv < 100 else 100))*0.01)) or int(order) in [39] ) and uid in fs :
             voice=[{"type": "record","data": {"file": f"file:///{script_path}/voice/{msg}.wav"}}]
             try: await bot.send_private_msg(user_id=uid,message=voice)
             except Exception as e: print(e)

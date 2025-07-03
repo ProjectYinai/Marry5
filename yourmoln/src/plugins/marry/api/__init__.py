@@ -18,7 +18,12 @@ def replyImg(e:MessageEvent,img:str):
 def lv(love:int,name='0'):
     """计算好感度等级"""
     love = int(love)
-    lv = int(((192*(192+love))**0.5-192)*100//1536)
+    if love < 0:
+        lv = 0
+    elif love < 15360:
+        lv = int(((192*(192+love))**0.5-192)*100//1536)
+    else:
+        lv = int(((love-15360)*100)//27648)+100
     for i in lv_list[::-1]:
         if lv >= i['lv']:
             nick = i['nick']

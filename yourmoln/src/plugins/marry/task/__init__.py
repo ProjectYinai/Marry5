@@ -4,6 +4,7 @@ from nonebot.matcher import Matcher
 from nonebot.adapters import Bot
 require("nonebot_plugin_apscheduler")
 import requests
+import data
 from nonebot_plugin_apscheduler import scheduler
 
 teaRequest=on_request(priority=99,block=False)
@@ -17,9 +18,14 @@ async def teaRequestFun(bot: Bot, e:RequestEvent, matcher: Matcher):
     elif request_type=="group":
         print("邀请加入群٩( 'ω' )و get！")
         sub_type=str(e.sub_type)
-        if sub_type=="invite":
-            flag_a=str(e.flag)
+        query=f"SELECT love,etea,teatime,name FROM user where uid== ?"
+        args=(e.user_id,)
+        love = data.sql(query,args)[0][0]
+        flag_a=str(e.flag)
+        if sub_type=="invite" and love >= 7680:
             await bot.set_group_add_request(flag=flag_a,approve=True)
+        else:
+            await bot.set_group_add_request(flag=flag_a,approve=False)
 
 #@scheduler.scheduled_job("cron", hour="22",minute="55",second="0", id="job_4")
 async def run_every_4_day():

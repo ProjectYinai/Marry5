@@ -38,7 +38,10 @@ async def nameSureFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
         elif cmd[2] == rows[0][0] and cmd[0]=='/同意昵称':
             msg=f"已将({cmd[1]})的昵称改为【{cmd[2]}】"
             query="update user set name=?, prename=NULL where uid = ?"
-            data.sql(query,(cmd[2],cmd[1]))
+            if cmd[2] in ['老婆','老公']:
+                data.sql(query,('笨蛋',cmd[1]))
+            else:
+                data.sql(query,(cmd[2],cmd[1]))
             fs = await api.myfriends()
             if cmd[1] in fs:
                 pmsg=f"(◍ ´꒳` ◍)店长的昵称审核成功啦，茉莉以后就叫你【{cmd[2]}】了哦~"
