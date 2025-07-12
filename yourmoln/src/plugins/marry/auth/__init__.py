@@ -1,8 +1,8 @@
-from nonebot import on_fullmatch, on_startswith, get_bot, on_message
+from nonebot import on_fullmatch, on_startswith, get_bot, on_message, on_notice
 from nonebot.adapters import Bot, Event, Message # type: ignore
 from nonebot.matcher import Matcher # type: ignore
 from nonebot.rule import is_type
-from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent, PokeNotifyEvent
 from api import reply, stamp_def, mygroups
 import data
 import requests,datetime
@@ -12,6 +12,7 @@ getauthTime=on_startswith(get_auth_start,is_type(GroupMessageEvent),priority=10,
 authTime=on_message(is_type(GroupMessageEvent),priority=5,block=False)
 whiteTime=on_message(is_type(GroupMessageEvent),priority=4,block=False)
 searchAuthTime=on_startswith(search_auth_start,is_type(GroupMessageEvent),priority=10,block=True)
+pokeTime=on_notice(is_type(PokeNotifyEvent),priority=5,block=False)
 def getauth(gid):
     rows = data.sql("select uid from auth WHERE gid == ?",(gid,))
     if len(rows) < 1:
@@ -24,6 +25,7 @@ async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     if w < 1:
         matcher.stop_propagation()
 @authTime.handle()
+@pokeTime.handle()
 async def authFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     gid=e.group_id
     uid=e.user_id

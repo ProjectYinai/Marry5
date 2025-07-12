@@ -4,7 +4,7 @@ from nonebot.matcher import Matcher # type: ignore
 from nonebot.rule import is_type
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent, PokeNotifyEvent
 from api import reply, replyImg
-
+import api,data
 import os, json, random
 script_path = os.path.split(os.path.realpath(__file__))[0]
 def choose(kind:str):
@@ -13,6 +13,7 @@ def choose(kind:str):
     return random.choice(cl)
 
 from .wife import roll,marry,rank
+from .hitokoto import generate_hitokoto_message
 
 help_match={"茉莉帮助","茉莉使用手册","如何与茉莉玩","茉莉指令大全","茉莉使用说明书","茉莉和我玩"}
 eat_match={"茉莉今天吃什么", "茉莉吃什么"}
@@ -73,5 +74,21 @@ async def marryWifeFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
 @pokeTime.handle()
 async def pokeFun(bot: Bot, e: PokeNotifyEvent, matcher: Matcher):
     if e.target_id == e.self_id:
-        msg_o="˚‧º·(˚ ˃̣̣̥᷄⌓˂̣̣̥᷅ )‧º·˚不要再戳茉莉啦~"
-        await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
+        mode = random.randint(0,9)
+        match mode:
+            case x if x < 9:
+                msg_o="˚‧º·(˚ ˃̣̣̥᷄⌓˂̣̣̥᷅ )‧º·˚不要再戳茉莉啦~"
+                await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
+            case 9:
+                await bot.group_poke(group_id=str(e.group_id),user_id=str(e.user_id))
+        fs = await api.myfriends()
+        if e.user_id in fs:
+            htk = hitokoto.generate_hitokoto_message()
+            query=f"SELECT name FROM user where uid = ?"
+            rows = data.sql(query,(e.user_id,))
+            name = '店长' if rows[0][0] in [None] else rows[0][0]
+            if htk["code"] == 200:
+                htkdata = htk["response"]["data"]
+                pmsg = f"{name}，梦中好呢ww~\n啊...刚刚在做梦吗？（。。）\n「{htkdata["hitokoto"]}」——{htkdata["source"]}...\n被吵醒有点困呢，再睡五分钟...（￣▽￣）"
+                m=[{"type":"text","data":{"text":pmsg}}]
+                await bot.send_private_msg(user_id=e.user_id,message=m)

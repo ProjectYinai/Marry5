@@ -8,6 +8,7 @@ async def callme(bot:Bot, e:GroupMessageEvent) -> str:
     uid = int(e.get_user_id())
     for i in call_start:
         msg=msg.replace(i,"")
+    msg=msg.strip()
     if len(msg) == 0: return "(*ﾟーﾟ)茉莉要叫店长什么呢？"
     elif len(msg) >= 16: return "(*ﾟーﾟ)店长的名字太长啦，稍微改短一点吧~"
     fl = await api.myfriends()

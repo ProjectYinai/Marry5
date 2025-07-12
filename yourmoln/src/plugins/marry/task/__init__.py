@@ -22,10 +22,11 @@ async def teaRequestFun(bot: Bot, e:RequestEvent, matcher: Matcher):
         args=(e.user_id,)
         love = data.sql(query,args)[0][0]
         flag_a=str(e.flag)
-        if sub_type=="invite" and love >= 7680:
-            await bot.set_group_add_request(flag=flag_a,approve=True)
-        else:
-            await bot.set_group_add_request(flag=flag_a,approve=False)
+        if sub_type=="invite":
+            if love >= 7680:
+                await bot.set_group_add_request(flag=flag_a,approve=True)
+            else:
+                await bot.set_group_add_request(flag=flag_a,approve=False)
 
 #@scheduler.scheduled_job("cron", hour="22",minute="55",second="0", id="job_4")
 async def run_every_4_day():

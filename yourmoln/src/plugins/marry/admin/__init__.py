@@ -23,7 +23,7 @@ exsendTime=on_startswith(exsend,is_type(GroupMessageEvent),priority=1,block=True
 async def nameSureFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     if str(e.user_id) in data.admin.id or data.getWhite(e.user_id)>=2:
         cmd = str(e.get_message()).split(" ")
-        if len(cmd)==1 or cmd[1] == '-h':
+        if len(cmd)<=2 or cmd[1] == '-h':
             msg='/[同意|拒绝]昵称 [qq号] [昵称]'
             msg_o=api.reply(e,msg)
             await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
@@ -31,6 +31,8 @@ async def nameSureFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
         query=f'SELECT prename FROM user where uid== ?'
         args=(cmd[1],)
         rows = data.sql(query,args)
+        try: cmd[2] = " ".join(cmd[2:])
+        except: pass
         if len(rows) == 0:
             msg=f"没有找到({cmd[1]})的申请"
         elif rows[0][0] == None:
@@ -66,7 +68,7 @@ async def nameSureFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
 async def whiteFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     if str(e.user_id) in data.admin.id or data.getWhite(e.user_id)>=10:
         cmd = str(e.get_message()).split(" ")
-        if len(cmd)==1 or cmd[1] == '-h':
+        if len(cmd)<=2 or cmd[1] == '-h':
             msg='/设白 [qq号] [白名单等级(int)]'
             msg_o=api.reply(e,msg)
             await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
