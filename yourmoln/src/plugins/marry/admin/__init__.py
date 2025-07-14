@@ -5,19 +5,23 @@ from nonebot.rule import is_type
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
 import data,api
 from .execute import buildcmd
-import json
+import json,psutil
 
 namesure = {"/同意昵称","/拒绝昵称"}
 white={"/设置白名单等级","/设白"}
 bcmd={"/生成指令"}
 excmd={"/执行指令"}
 exsend={"/发送群消息"}
+recrash={"/刷新缓存","/强制刷新缓存"}
+hoststate={"/服务器状态","/服务器"}
 
 nameSureTime=on_startswith(namesure,is_type(GroupMessageEvent),priority=3,block=True)
 whiteTime=on_startswith(white,is_type(GroupMessageEvent),priority=3,block=True)
 bcmdTime=on_startswith(bcmd,is_type(GroupMessageEvent),priority=1,block=True)
 excmdTime=on_startswith(excmd,is_type(GroupMessageEvent),priority=1,block=True)
 exsendTime=on_startswith(exsend,is_type(GroupMessageEvent),priority=1,block=True)
+recrashTime=on_fullmatch(recrash,is_type(GroupMessageEvent),priority=3,block=True)
+hostStateTime=on_fullmatch(hoststate,is_type(GroupMessageEvent),priority=3,block=True)
 
 @nameSureTime.handle()
 async def nameSureFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
@@ -117,4 +121,26 @@ async def exsendFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
         try: await bot.send_group_msg(group_id=str(sgid),message=[json.loads(send)])
         except Exception as exc: msg_o=api.reply(e,f"消息：{send}\n发送失败\n{exc}")
         else: msg_o=api.reply(e,"发送成功")
+        await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
+
+@recrashTime.handle()
+async def recrashFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
+    if str(e.user_id) in data.admin.id or data.getWhite(e.user_id)>=5:
+        await bot.clean_cache()
+        fs = await api.myfriends()
+        gs = await api.mygroups()
+        msg=f"缓存已刷新，当前拥有\n{len(fs)}位好友\n{len(gs)}个群聊\n今天是茉莉诞生的第{api.marryNowTime().days}天"
+        msg_o=api.reply(e,msg)
+        await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
+
+@hostStateTime.handle()
+async def hostStateFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
+    if str(e.user_id) in data.admin.id or data.getWhite(e.user_id)>=5:
+        cpus = f"CPU：\t{psutil.cpu_percent(interval=0.5)}%"
+        mem = psutil.virtual_memory()
+        mems = f"内存：\t{mem.percent}%"
+        disk = psutil.disk_usage('/')
+        disks = f"硬盘：\t{disk.percent}%"
+        msg = "====服务器====\n"+"\n".join([cpus,mems,disks])
+        msg_o=api.reply(e,msg)
         await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
