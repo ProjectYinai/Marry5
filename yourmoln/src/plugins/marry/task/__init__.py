@@ -3,8 +3,8 @@ from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent, 
 from nonebot.matcher import Matcher
 from nonebot.adapters import Bot
 require("nonebot_plugin_apscheduler")
-import requests
-import data
+import requests,time
+import data,api
 from nonebot_plugin_apscheduler import scheduler
 
 teaRequest=on_request(priority=99,block=False)
@@ -15,6 +15,21 @@ async def teaRequestFun(bot: Bot, e:RequestEvent, matcher: Matcher):
         print("加好友申请٩( 'ω' )و get！")
         flag_a=str(e.flag)
         await bot.set_friend_add_request(flag=flag_a,approve=True)
+        query=f'SELECT name FROM user where uid== ?'
+        args=(e.get_user_id(),)
+        try:
+            name = data.sql(query,args)[0][0]
+        except:
+            data.sql(f"INSERT OR IGNORE INTO user \
+                 (uid, meet) values \
+                 (?,?)",
+                 (e.get_user_id(),api.marryNowTime().days))
+            name = None
+        if name == None:
+            time.sleep(5)
+            msg = "(*ﾟ∇ﾟ)茉莉要怎么称呼店长呢？\n tips:茉莉叫我xxx"
+            msg = [{"type":"text","data":{"text":msg}}]
+            await bot.send_private_msg(user_id=e.get_user_id(),message=msg)
     elif request_type=="group":
         print("邀请加入群٩( 'ω' )و get！")
         sub_type=str(e.sub_type)

@@ -11,7 +11,8 @@ namesure = {"/同意昵称","/拒绝昵称"}
 white={"/设置白名单等级","/设白"}
 bcmd={"/生成指令"}
 excmd={"/执行指令"}
-exsend={"/发送群消息"}
+exgsend={"/发送群消息"}
+expsend={"/发送私聊消息"}
 recrash={"/刷新缓存","/强制刷新缓存"}
 hoststate={"/服务器状态","/服务器"}
 
@@ -19,7 +20,8 @@ nameSureTime=on_startswith(namesure,is_type(GroupMessageEvent),priority=3,block=
 whiteTime=on_startswith(white,is_type(GroupMessageEvent),priority=3,block=True)
 bcmdTime=on_startswith(bcmd,is_type(GroupMessageEvent),priority=1,block=True)
 excmdTime=on_startswith(excmd,is_type(GroupMessageEvent),priority=1,block=True)
-exsendTime=on_startswith(exsend,is_type(GroupMessageEvent),priority=1,block=True)
+exGsendTime=on_startswith(exgsend,is_type(GroupMessageEvent),priority=1,block=True)
+exPsendTime=on_startswith(expsend,is_type(GroupMessageEvent),priority=1,block=True)
 recrashTime=on_fullmatch(recrash,is_type(GroupMessageEvent),priority=3,block=True)
 hostStateTime=on_fullmatch(hoststate,is_type(GroupMessageEvent),priority=3,block=True)
 
@@ -49,7 +51,7 @@ async def nameSureFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
             else:
                 data.sql(query,(cmd[2],cmd[1]))
             fs = await api.myfriends()
-            if cmd[1] in fs:
+            if int(cmd[1]) in fs:
                 pmsg=f"(◍ ´꒳` ◍)店长的昵称审核成功啦，茉莉以后就叫你【{cmd[2]}】了哦~"
                 m=[{"type":"text","data":{"text":pmsg}}]
                 await bot.send_private_msg(user_id=cmd[1],message=m)
@@ -58,7 +60,7 @@ async def nameSureFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
             query="update user set prename=NULL where uid = ?"
             data.sql(query,(cmd[1],))
             fs = await api.myfriends()
-            if cmd[1] in fs:
+            if int(cmd[1]) in fs:
                 pmsg=f"( 〞 0 ˄ 0 )店长的昵称审核失败！若多次设置违规昵称，茉莉可能会不理店长了哦！"
                 m=[{"type":"text","data":{"text":pmsg}}]
                 await bot.send_private_msg(user_id=cmd[1],message=m)
@@ -107,8 +109,8 @@ async def excmdFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
         msg_o=api.reply(e,msg)
         await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
 
-@exsendTime.handle()
-async def exsendFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
+@exGsendTime.handle()
+async def exGsendFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     if str(e.user_id) in data.admin.id or data.getWhite(e.user_id)>=10:
         cmd = str(e.get_message()).split(" ")
         if len(cmd)==1 or cmd[1] == '-h':
@@ -119,6 +121,22 @@ async def exsendFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
         sgid = cmd[1]
         send = "".join(cmd[2:])
         try: await bot.send_group_msg(group_id=str(sgid),message=[json.loads(send)])
+        except Exception as exc: msg_o=api.reply(e,f"消息：{send}\n发送失败\n{exc}")
+        else: msg_o=api.reply(e,"发送成功")
+        await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
+
+@exPsendTime.handle()
+async def exPsendFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
+    if str(e.user_id) in data.admin.id or data.getWhite(e.user_id)>=10:
+        cmd = str(e.get_message()).split(" ")
+        if len(cmd)==1 or cmd[1] == '-h':
+            msg='/发送群消息 [qid] [CQ格式消息]'
+            msg_o=api.reply(e,msg)
+            await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
+            return
+        suid = cmd[1]
+        send = "".join(cmd[2:])
+        try: await bot.send_private_msg(user_id=str(suid),message=[json.loads(send)])
         except Exception as exc: msg_o=api.reply(e,f"消息：{send}\n发送失败\n{exc}")
         else: msg_o=api.reply(e,"发送成功")
         await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)

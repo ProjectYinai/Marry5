@@ -1,8 +1,8 @@
-from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent, MessageEvent
 from nonebot.adapters import Bot
 import data,api
 call_start={"茉莉以后叫我","茉莉请叫我","茉莉叫我"}
-async def callme(bot:Bot, e:GroupMessageEvent) -> str:
+async def callme(bot:Bot, e:MessageEvent) -> str:
     """这个功能是申请昵称用哒"""
     msg = str(e.get_message())
     uid = int(e.get_user_id())
@@ -27,7 +27,10 @@ async def callme(bot:Bot, e:GroupMessageEvent) -> str:
     args=(msg,stamp[4],uid,)
     data.sql(query,args)
     res = f"(*ﾟ∇ﾟ)明白啦，审核成功后茉莉就叫店长【{msg}】了哦~"
-    am1=f"申请人QQ: {uid}\n申请所在群: {e.group_id}\n申请昵称: {msg}"
+    if type(e) == GroupMessageEvent:
+        am1=f"申请人QQ: {uid}\n申请所在群: {e.group_id}\n申请昵称: {msg}"
+    else:
+        am1=f"申请人QQ: {uid}\n申请昵称: {msg}"
     am1=[{"type":"text","data":{"text":am1}}]
     am2=f"/同意昵称 {uid} {msg}"
     am2=[{"type":"text","data":{"text":am2}}]

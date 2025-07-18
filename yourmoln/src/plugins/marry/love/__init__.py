@@ -2,7 +2,7 @@ from nonebot import on_fullmatch, on_startswith
 from nonebot.adapters import Bot, Event, Message # type: ignore
 from nonebot.matcher import Matcher # type: ignore
 from nonebot.rule import is_type
-from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent, MessageEvent
 from api import reply
 from .tea import tea
 from .hi import hi
@@ -15,7 +15,7 @@ call_start={"茉莉以后叫我","茉莉请叫我","茉莉叫我"}
 teaTime=on_fullmatch(tea_match,is_type(GroupMessageEvent),priority=10,block=True)
 hiTime=on_fullmatch(hi_match,is_type(GroupMessageEvent),priority=10,block=True)
 loveTime=on_fullmatch(love_match,is_type(GroupMessageEvent),priority=10,block=True)
-callTime=on_startswith(call_start,is_type(GroupMessageEvent),priority=10,block=True)
+callTime=on_startswith(call_start,is_type(MessageEvent),priority=10,block=True)
 
 @teaTime.handle()
 async def teaFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
@@ -36,7 +36,10 @@ async def loveFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
     await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
 
 @callTime.handle()
-async def callFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
+async def callFun(bot: Bot, e: MessageEvent, matcher: Matcher):
     msg=await callme(bot,e)
     msg_o=reply(e,msg)
-    await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
+    if type(e) == GroupMessageEvent:
+        await bot.send_group_msg(group_id=str(e.group_id),message=msg_o)
+    else:
+        await matcher.send(msg)
