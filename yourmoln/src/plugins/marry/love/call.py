@@ -30,7 +30,7 @@ async def callme(bot:Bot, e:MessageEvent) -> str:
     if type(e) == GroupMessageEvent:
         am1=f"申请人QQ: {uid}\n申请所在群: {e.group_id}\n申请昵称: {msg}"
     else:
-        am1=f"申请人QQ: {uid}\n申请昵称: {msg}"
+        am1=f"申请人QQ: {uid}\n申请所在群: 0\n申请昵称: {msg}"
     am1=[{"type":"text","data":{"text":am1}}]
     am2=f"/同意昵称 {uid} {msg}"
     am2=[{"type":"text","data":{"text":am2}}]

@@ -14,7 +14,7 @@ def choose(kind:str):
 
 from .wife import roll,marry,rank
 from .hitokoto import generate_hitokoto_message
-
+import play.teach
 help_match={"茉莉帮助","茉莉使用手册","如何与茉莉玩","茉莉指令大全","茉莉使用说明书","茉莉和我玩"}
 eat_match={"茉莉今天吃什么", "茉莉吃什么"}
 drink_match={"茉莉今天喝什么", "茉莉喝什么"}

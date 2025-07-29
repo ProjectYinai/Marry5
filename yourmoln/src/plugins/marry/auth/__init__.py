@@ -94,7 +94,7 @@ async def getauthFun(bot: Bot, e: GroupMessageEvent, matcher: Matcher):
         try: role = await bot.get_group_member_info(group_id=msg_i,user_id=uid,no_cache=False)
         except: role = 0
         else: role = role['role']
-        try: gml = await bot.get_group_member_list(group_id=gid,no_cache=False)
+        try: gml = await bot.get_group_member_list(group_id=msg_i,no_cache=False)
         except: gml = 1
         else: gml = len(gml)
         if role == 0: msg=f"( 〞 0 ˄ 0 )错误代码：D-2-2。\n店长不是群聊({msg_i})的成员呢。"
